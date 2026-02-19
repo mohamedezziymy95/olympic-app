@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>مولّد الأيقونات — أولمبياد المعرفة</title>
+  <style>
+    /* ──────────────────────────────────────────
+       ICON GENERATOR STYLES
+       ────────────────────────────────────────── */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Segoe UI', 'Cairo', Arial, sans-serif;
+      background: #0f1117;
+      color: #e8eaf0;
+      min-height: 100vh;
+      padding: 2rem 1rem;
+      direction: rtl;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 1.6rem;
+      margin-bottom: 0.5rem;
+      color: #1a73e8;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: #8b90a4;
+      font-size: 0.9rem;
+      margin-bottom: 2rem;
+    }
+
+    /* Controls */
+    .controls {
+      background: #1a1d27;
+      border: 1px solid #2a2d3a;
+      border-radius: 16px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .controls-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+    }
+
+    .form-group label {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #8b90a4;
+    }
+
+    .form-group input,
+    .form-group select {
+      padding: 0.6rem 0.8rem;
+      border: 1.5px solid #2a2d3a;
+      border-radius: 10px;
+      background: #0f1117;
+      color: #e8eaf0;
+      font-size: 0.95rem;
+      font-family: inherit;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus {
+      border-color: #1a73e8;
+    }
+
+    input[type="color"] {
+      width: 100%;
+      height: 42px;
+      cursor: pointer;
+      border: none;
+      padding: 2px;
+    }
+
+    /* Preview */
+    .preview-section {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .preview-section h2 {
+      font-size: 1.1rem;
+      color: #8b90a4;
+      margin-bottom: 1rem;
+    }
+
+    .preview-canvas-wrapper {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: #1a1d27;
+      border: 2px dashed #2a2d3a;
+      border-radius: 20px;
+      padding: 2rem;
+      margin-bottom: 1rem;
+    }
+
+    #preview-canvas {
+      border-radius: 20px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    }
+
+    /* Generate button */
+    .btn-generate {
+      display: block;
+      width: 100%;
+      max-width: 400px;
+      margin: 0 auto 2rem;
+      padding: 0.8rem 1.5rem;
+      background: linear-gradient(135deg, #1a73e8, #1558b0);
+      color: #fff;
+      border: none;
+      border-radius: 14px;
+      font-size: 1.05rem;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      transition: transform 0.15s, box-shadow 0.2s;
+      box-shadow: 0 4px 16px rgba(26, 115, 232, 0.3);
+    }
+
+    .btn-generate:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 24px rgba(26, 115, 232, 0.45);
+    }
+
+    .btn-generate:active {
+      transform: scale(0.97);
+    }
+
+    /* Icons grid */
+    .icons-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 1rem;
+    }
+
+    .icon-card {
+      background: #1a1d27;
+      border: 1px solid #2a2d3a;
+      border-radius: 14px;
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.7rem;
+      transition: border-color 0.2s;
+    }
+
+    .icon-card:hover {
+      border-color: #1a73e8;
+    }
+
+    .icon-card canvas {
+      border-radius: 12px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    }
+
+    .icon-card__size {
+      font-size: 0.8rem;
+      color: #8b90a4;
+      font-weight: 600;
+    }
+
+    .icon-card__btn {
+      width: 100%;
+      padding: 0.45rem;
+      background: #2a2d3a;
+      border: none;
+      border-radius: 8px;
+      color: #1a73e8;
+      font-size: 0.8rem;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .icon-card__btn:hover {
+      background: #1a73e8;
+      color: #fff;
+    }
+
+    /* Download All */
+    .btn-download-all {
+      display: block;
+      width: 100%;
+      max-width: 400px;
+      margin: 1.5rem auto 0;
+      padding: 0.8rem;
+      background: #34a853;
+      color: #fff;
+      border: none;
+      border-radius: 14px;
+      font-size: 1rem;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      transition: transform 0.15s;
+      box-shadow: 0 4px 16px rgba(52, 168, 83, 0.3);
+    }
+
+    .btn-download-all:hover {
+      transform: translateY(-2px);
+    }
+
+    .btn-download-all:active {
+      transform: scale(0.97);
+    }
+
+    /* Status */
+    .status {
+      text-align: center;
+      color: #34a853;
+      font-size: 0.9rem;
+      margin-top: 1rem;
+      min-height: 1.5em;
+    }
+
+    /* Instructions */
+    .instructions {
+      background: #1a1d27;
+      border: 1px solid #2a2d3a;
+      border-radius: 16px;
+      padding: 1.5rem;
+      margin-top: 2rem;
+    }
+
+    .instructions h3 {
+      color: #1a73e8;
+      margin-bottom: 0.8rem;
+      font-size: 1rem;
+    }
+
+    .instructions ol {
+      padding-right: 1.2rem;
+      list-style: decimal;
+    }
+
+    .instructions li {
+      color: #8b90a4;
+      font-size: 0.9rem;
+      margin-bottom: 0.5rem;
+      line-height: 1.6;
+    }
+
+    .instructions code {
+      background: #0f1117;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 0.85rem;
+      color: #fbbc04;
+    }
+
+    /* Emoji selector */
+    .emoji-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 0.3rem;
+    }
+
+    .emoji-option {
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      border: 2px solid #2a2d3a;
+      border-radius: 8px;
+      cursor: pointer;
+      background: #0f1117;
+      transition: all 0.15s;
+    }
+
+    .emoji-option:hover {
+      border-color: #1a73e8;
+      background: #1a2540;
+    }
+
+    .emoji-option.selected {
+      border-color: #1a73e8;
+      background: #1a73e8;
+    }
+
+    /* Responsive */
+    @media (max-width: 480px) {
+      .controls-grid {
+        grid-template-columns: 1fr;
+      }
+      .icons-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+
+    <!-- Header -->
+    <h1>🎨 مولّد أيقونات التطبيق</h1>
+    <p class="subtitle">أنشئ جميع أحجام الأيقونات المطلوبة لتطبيق PWA الخاص بك</p>
+
+    <!-- Controls -->
+    <div class="controls">
+      <div class="controls-grid">
+
+        <!-- Text -->
+        <div class="form-group">
+          <label for="icon-text">النص على الأيقونة</label>
+          <input type="text" id="icon-text" value="أ" maxlength="3" />
+        </div>
+
+        <!-- Background Color -->
+        <div class="form-group">
+          <label for="icon-bg">لون الخلفية</label>
+          <input type="color" id="icon-bg" value="#1a73e8" />
+        </div>
+
+        <!-- Text Color -->
+        <div class="form-group">
+          <label for="icon-text-color">لون النص</label>
+          <input type="color" id="icon-text-color" value="#ffffff" />
+        </div>
+
+        <!-- Shape -->
+        <div class="form-group">
+          <label for="icon-shape">شكل الأيقونة</label>
+          <select id="icon-shape">
+            <option value="rounded">مربع مدوّر</option>
+            <option value="circle">دائري</option>
+            <option value="square">مربع</option>
+          </select>
+        </div>
+
+        <!-- Font Size -->
+        <div class="form-group">
+          <label for="icon-font-size">حجم الخط (%)</label>
+          <input type="range" id="icon-font-size" min="20" max="80" value="50"
+                 style="accent-color: #1a73e8;" />
+        </div>
+
+        <!-- Gradient -->
+        <div class="form-group">
+          <label for="icon-gradient">تدرج لوني</label>
+          <select id="icon-gradient">
+            <option value="none">بدون</option>
+            <option value="linear" selected>خطي</option>
+            <option value="radial">دائري</option>
+          </select>
+        </div>
+
+      </div>
+
+      <!-- Emoji quick select -->
+      <div class="form-group" style="margin-top: 1rem;">
+        <label>أو اختر رمز سريع:</label>
+        <div class="emoji-grid" id="emoji-grid">
+          <div class="emoji-option" data-emoji="🏆">🏆</div>
+          <div class="emoji-option" data-emoji="📐">📐</div>
+          <div class="emoji-option" data-emoji="🔢">🔢</div>
+          <div class="emoji-option" data-emoji="📚">📚</div>
+          <div class="emoji-option" data-emoji="🎯">🎯</div>
+          <div class="emoji-option" data-emoji="⭐">⭐</div>
+          <div class="emoji-option" data-emoji="🧮">🧮</div>
+          <div class="emoji-option" data-emoji="💡">💡</div>
+          <div class="emoji-option" data-emoji="🚀">🚀</div>
+          <div class="emoji-option" data-emoji="🎓">🎓</div>
+          <div class="emoji-option" data-emoji="✏️">✏️</div>
+          <div class="emoji-option" data-emoji="📏">📏</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Preview -->
+    <div class="preview-section">
+      <h2>👁️ المعاينة</h2>
+      <div class="preview-canvas-wrapper">
+        <canvas id="preview-canvas" width="192" height="192"></canvas>
+      </div>
+    </div>
+
+    <!-- Generate Button -->
+    <button class="btn-generate" id="btn-generate">
+      ⚡ توليد جميع الأحجام
+    </button>
+
+    <!-- Generated Icons -->
+    <div class="icons-grid" id="icons-grid"></div>
+
+    <!-- Download All -->
+    <button class="btn-download-all hidden" id="btn-download-all">
+      📦 تحميل الكل دفعة واحدة
+    </button>
+
+    <!-- Status -->
+    <p class="status" id="status"></p>
+
+    <!-- Instructions -->
+    <div class="instructions">
+      <h3>📋 كيفية الاستخدام:</h3>
+      <ol>
+        <li>اختر النص أو الرمز الذي تريده على الأيقونة</li>
+        <li>خصص الألوان والشكل حسب رغبتك</li>
+        <li>اضغط على <strong>"توليد جميع الأحجام"</strong></li>
+        <li>حمّل كل أيقونة على حدة أو اضغط <strong>"تحميل الكل"</strong></li>
+        <li>انقل الملفات إلى مجلد <code>assets/icons/</code> في مشروعك</li>
+        <li>تأكد أن أسماء الملفات تطابق ما في <code>manifest.json</code></li>
+      </ol>
+    </div>
+
+  </div>
+
+  <script>
+    /* ============================================================
+       ICON GENERATOR — LOGIC
+       ============================================================ */
+    (() => {
+
+      /* ─────── SIZES ─────── */
+      const ICON_SIZES = [72, 96, 128, 144, 152, 192, 384, 512];
+
+      /* ─────── DOM ─────── */
+      const inputText      = document.getElementById('icon-text');
+      const inputBg        = document.getElementById('icon-bg');
+      const inputTextColor = document.getElementById('icon-text-color');
+      const inputShape     = document.getElementById('icon-shape');
+      const inputFontSize  = document.getElementById('icon-font-size');
+      const inputGradient  = document.getElementById('icon-gradient');
+      const previewCanvas  = document.getElementById('preview-canvas');
+      const iconsGrid      = document.getElementById('icons-grid');
+      const emojiGrid      = document.getElementById('emoji-grid');
+      const btnGenerate    = document.getElementById('btn-generate');
+      const btnDownloadAll = document.getElementById('btn-download-all');
+      const statusEl       = document.getElementById('status');
+
+      let useEmoji     = false;
+      let selectedEmoji = '';
+
+      /* ─────── DRAW ICON ─────── */
+
+      /**
+       * رسم الأيقونة على canvas
+       * @param {HTMLCanvasElement} canvas
+       * @param {number} size
+       */
+      const drawIcon = (canvas, size) => {
+        canvas.width  = size;
+        canvas.height = size;
+
+        const ctx      = canvas.getContext('2d');
+        const bgColor  = inputBg.value;
+        const txtColor = inputTextColor.value;
+        const shape    = inputShape.value;
+        const gradient = inputGradient.value;
+        const fontPct  = parseInt(inputFontSize.value, 10);
+        const text     = useEmoji ? selectedEmoji : inputText.value || 'أ';
+
+        // Clear
+        ctx.clearRect(0, 0, size, size);
+
+        // Background
+        let fill;
+        if (gradient === 'linear') {
+          fill = ctx.createLinearGradient(0, 0, size, size);
+          fill.addColorStop(0, bgColor);
+          fill.addColorStop(1, _darkenColor(bgColor, 25));
+        } else if (gradient === 'radial') {
+          fill = ctx.createRadialGradient(size / 2, size / 3, 0, size / 2, size / 2, size * 0.7);
+          fill.addColorStop(0, _lightenColor(bgColor, 15));
+          fill.addColorStop(1, bgColor);
+        } else {
+          fill = bgColor;
+        }
+
+        ctx.fillStyle = fill;
+
+        // Shape
+        const radius = size * 0.18;
+        if (shape === 'circle') {
+          ctx.beginPath();
+          ctx.arc(size / 2, size / 2, size / 2, 0, Math.PI * 2);
+          ctx.fill();
+        } else if (shape === 'rounded') {
+          _roundedRect(ctx, 0, 0, size, size, radius);
+          ctx.fill();
+        } else {
+          ctx.fillRect(0, 0, size, size);
+        }
+
+        // Subtle inner shadow
+        if (shape === 'circle') {
+          const innerGrad = ctx.createRadialGradient(
+            size * 0.4, size * 0.35, 0,
+            size / 2, size / 2, size / 2
+          );
+          innerGrad.addColorStop(0, 'rgba(255,255,255,0.12)');
+          innerGrad.addColorStop(0.5, 'rgba(255,255,255,0)');
+          innerGrad.addColorStop(1, 'rgba(0,0,0,0.1)');
+          ctx.fillStyle = innerGrad;
+          ctx.beginPath();
+          ctx.arc(size / 2, size / 2, size / 2, 0, Math.PI * 2);
+          ctx.fill();
+        } else if (shape === 'rounded') {
+          const innerGrad = ctx.createLinearGradient(0, 0, 0, size);
+          innerGrad.addColorStop(0, 'rgba(255,255,255,0.1)');
+          innerGrad.addColorStop(0.5, 'rgba(255,255,255,0)');
+          innerGrad.addColorStop(1, 'rgba(0,0,0,0.08)');
+          ctx.fillStyle = innerGrad;
+          _roundedRect(ctx, 0, 0, size, size, radius);
+          ctx.fill();
+        }
+
+        // Text / Emoji
+        const fontSize = Math.round(size * (fontPct / 100));
+        ctx.fillStyle    = txtColor;
+        ctx.textAlign    = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.font         = `bold ${fontSize}px "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", "Segoe UI", Arial, sans-serif`;
+
+        // Shadow on text
+        ctx.shadowColor   = 'rgba(0,0,0,0.2)';
+        ctx.shadowBlur    = size * 0.03;
+        ctx.shadowOffsetY = size * 0.015;
+
+        ctx.fillText(text, size / 2, size / 2 + size * 0.02);
+
+        // Reset shadow
+        ctx.shadowColor   = 'transparent';
+        ctx.shadowBlur    = 0;
+        ctx.shadowOffsetY = 0;
+      };
+
+      /* ─────── SHAPE HELPER ─────── */
+
+      const _roundedRect = (ctx, x, y, w, h, r) => {
+        ctx.beginPath();
+        ctx.moveTo(x + r, y);
+        ctx.lineTo(x + w - r, y);
+        ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+        ctx.lineTo(x + w, y + h - r);
+        ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+        ctx.lineTo(x + r, y + h);
+        ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+        ctx.lineTo(x, y + r);
+        ctx.quadraticCurveTo(x, y, x + r, y);
+        ctx.closePath();
+      };
+
+      /* ─────── COLOR HELPERS ─────── */
+
+      const _darkenColor = (hex, percent) => {
+        const num = parseInt(hex.slice(1), 16);
+        const r = Math.max(0, (num >> 16) - Math.round(2.55 * percent));
+        const g = Math.max(0, ((num >> 8) & 0x00FF) - Math.round(2.55 * percent));
+        const b = Math.max(0, (num & 0x0000FF) - Math.round(2.55 * percent));
+        return `rgb(${r},${g},${b})`;
+      };
+
+      const _lightenColor = (hex, percent) => {
+        const num = parseInt(hex.slice(1), 16);
+        const r = Math.min(255, (num >> 16) + Math.round(2.55 * percent));
+        const g = Math.min(255, ((num >> 8) & 0x00FF) + Math.round(2.55 * percent));
+        const b = Math.min(255, (num & 0x0000FF) + Math.round(2.55 * percent));
+        return `rgb(${r},${g},${b})`;
+      };
+
+      /* ─────── UPDATE PREVIEW ─────── */
+
+      const updatePreview = () => {
+        drawIcon(previewCanvas, 192);
+      };
+
+      /* ─────── GENERATE ALL ─────── */
+
+      const generateAll = () => {
+        iconsGrid.innerHTML = '';
+
+        ICON_SIZES.forEach(size => {
+          // Card
+          const card = document.createElement('div');
+          card.className = 'icon-card';
+
+          // Canvas
+          const canvas = document.createElement('canvas');
+          const displaySize = Math.min(size, 128);
+          canvas.style.width  = displaySize + 'px';
+          canvas.style.height = displaySize + 'px';
+          drawIcon(canvas, size);
+
+          // Label
+          const label = document.createElement('span');
+          label.className = 'icon-card__size';
+          label.textContent = `${size} × ${size}`;
+
+          // Download button
+          const btn = document.createElement('button');
+          btn.className = 'icon-card__btn';
+          btn.textContent = `⬇ icon-${size}.png`;
+          btn.addEventListener('click', () => {
+            _downloadCanvas(canvas, `icon-${size}.png`);
+          });
+
+          card.appendChild(canvas);
+          card.appendChild(label);
+          card.appendChild(btn);
+          iconsGrid.appendChild(card);
+        });
+
+        btnDownloadAll.classList.remove('hidden');
+        statusEl.textContent = `✅ تم توليد ${ICON_SIZES.length} أيقونة بنجاح!`;
+      };
+
+      /* ─────── DOWNLOAD ─────── */
+
+      const _downloadCanvas = (canvas, filename) => {
+        const link = document.createElement('a');
+        link.download = filename;
+        link.href     = canvas.toDataURL('image/png');
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      };
+
+      const downloadAll = () => {
+        const canvases = iconsGrid.querySelectorAll('canvas');
+        let index = 0;
+
+        statusEl.textContent = '⏳ جاري تحميل الأيقونات...';
+
+        const downloadNext = () => {
+          if (index >= canvases.length) {
+            statusEl.textContent = `✅ تم تحميل ${canvases.length} أيقونة!`;
+            return;
+          }
+
+          const canvas = canvases[index];
+          const size   = ICON_SIZES[index];
+          _downloadCanvas(canvas, `icon-${size}.png`);
+          index++;
+
+          // تأخير بسيط بين التحميلات لتجنب الحظر
+          setTimeout(downloadNext, 350);
+        };
+
+        downloadNext();
+      };
+
+      /* ─────── EMOJI SELECTION ─────── */
+
+      emojiGrid.querySelectorAll('.emoji-option').forEach(option => {
+        option.addEventListener('click', () => {
+          // إزالة التحديد السابق
+          emojiGrid.querySelectorAll('.emoji-option').forEach(o =>
+            o.classList.remove('selected')
+          );
+
+          option.classList.add('selected');
+          selectedEmoji = option.dataset.emoji;
+          useEmoji      = true;
+          inputText.value = selectedEmoji;
+          updatePreview();
+        });
+      });
+
+      /* ─────── EVENT LISTENERS ─────── */
+
+      // تحديث المعاينة عند أي تغيير
+      [inputText, inputBg, inputTextColor, inputShape, inputFontSize, inputGradient].forEach(el => {
+        el.addEventListener('input', () => {
+          // إذا كتب المستخدم يدوياً → إلغاء وضع الإيموجي
+          if (el === inputText) {
+            useEmoji = false;
+            emojiGrid.querySelectorAll('.emoji-option').forEach(o =>
+              o.classList.remove('selected')
+            );
+          }
+          updatePreview();
+        });
+      });
+
+      // زر التوليد
+      btnGenerate.addEventListener('click', generateAll);
+
+      // زر تحميل الكل
+      btnDownloadAll.addEventListener('click', downloadAll);
+
+      /* ─────── INIT ─────── */
+      updatePreview();
+
+    })();
+  </script>
+
+</body>
+</html>
