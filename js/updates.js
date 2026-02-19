@@ -10,7 +10,7 @@ const Updates = (() => {
      ────────────────────────────────────────── */
   const CONFIG = {
     // ✏️ ضع هنا رابط ملف updates.json من GitHub Raw
-    JSON_URL: 'https://raw.githubusercontent.com/YOUR_USERNAME/YOUR_REPO/main/data/updates.json',
+    JSON_URL: 'https://raw.githubusercontent.com/mohamedezziymy95/olympic-app/refs/heads/main/js/updates.js',
 
     // مدة الكاش قبل إعادة الجلب (بالمللي ثانية) — 30 دقيقة
     CACHE_DURATION_MS: 30 * 60 * 1000,
@@ -430,5 +430,6 @@ const Updates = (() => {
     // للتعديل من الخارج إذا لزم
     setJsonUrl: (url) => { CONFIG.JSON_URL = url; },
   };
+
 
 })();
