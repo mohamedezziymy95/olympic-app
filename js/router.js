@@ -40,7 +40,7 @@ const Router = (() => {
     _routes[name] = {
       name,
       renderer,
-      title      : options.title       ?? 'أولمبياد المعرفة',
+      title      : options.title       ?? 'أولمبياد الفيزياء والكيمياء ',
       showNav    : options.showNav     ?? true,
       requireAuth: options.requireAuth ?? true,
     };

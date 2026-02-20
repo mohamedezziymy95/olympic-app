@@ -63,15 +63,6 @@ const App = (() => {
           </ol>
         `,
       },
-       {
-  id: 4,
-  title: 'عنوان الدرس الجديد',
-  description: 'وصف قصير',
-  icon: '📘',
-  category: 'رياضيات',
-  duration: '20 دقيقة',
-  content: `<h3>المحتوى هنا...</h3><p>...</p>`,
-},
       {
         id: 2,
         title: 'نظرية الأعداد - الجزء الأول',
@@ -134,15 +125,6 @@ const App = (() => {
           <p><em>تلميح: استخدم نظرية فيرما الصغرى أو ابحث عن النمط الدوري.</em></p>
         `,
       },
-       {
-  id: 5,
-  title: 'تمرين 5: العنوان',
-  description: 'وصف قصير',
-  icon: '✏️',
-  difficulty: 'متوسط',
-  points: 20,
-  question: `<p>نص التمرين هنا...</p>`,
-},
       {
         id: 2,
         title: 'تمرين 2: مسألة هندسية',
@@ -498,43 +480,43 @@ const App = (() => {
 
   const _registerRoutes = () => {
     Router.register('home', renderHome, {
-      title: 'الرئيسية — أولمبياد المعرفة',
+      title: 'الرئيسية — أولمبياد الفيزياء والكيمياء ',
       showNav: true,
       requireAuth: true,
     });
 
     Router.register('lessons', renderLessons, {
-      title: 'الدروس — أولمبياد المعرفة',
+      title: 'الدروس — أولمبياد الفيزياء والكيمياء ',
       showNav: true,
       requireAuth: true,
     });
 
     Router.register('lesson-detail', renderLessonDetail, {
-      title: 'تفاصيل الدرس — أولمبياد المعرفة',
+      title: 'تفاصيل الدرس — أولمبياد الفيزياء والكيمياء ',
       showNav: false,
       requireAuth: true,
     });
 
     Router.register('exercises', renderExercises, {
-      title: 'التمارين — أولمبياد المعرفة',
+      title: 'التمارين — أولمبياد الفيزياء والكيمياء ',
       showNav: true,
       requireAuth: true,
     });
 
     Router.register('exercise-detail', renderExerciseDetail, {
-      title: 'تفاصيل التمرين — أولمبياد المعرفة',
+      title: 'تفاصيل التمرين —  أولمبياد الفيزياء والكيمياء',
       showNav: false,
       requireAuth: true,
     });
 
     Router.register('updates', renderUpdates, {
-      title: 'التحديثات — أولمبياد المعرفة',
+      title: 'التحديثات — أولمبياد الفيزياء والكيمياء ',
       showNav: true,
       requireAuth: true,
     });
 
     Router.register('not-found', renderNotFound, {
-      title: 'غير موجود — أولمبياد المعرفة',
+      title: 'غير موجود — أولمبياد الفيزياء والكيمياء ',
       showNav: true,
       requireAuth: false,
     });
@@ -613,7 +595,7 @@ const App = (() => {
 
     // بناء رسالة الواتساب
     const message = `
-📝 *إجابة تمرين — أولمبياد المعرفة*
+📝 *إجابة تمرين — أولمبياد الفيزياء والكيمياء *
 
 👤 *الاسم:* ${student.fullName}
 🎓 *المستوى:* ${student.level}
@@ -816,5 +798,4 @@ ${answer}
 /* ──────────────────────────────────────────
    DOM READY — تشغيل التطبيق
    ────────────────────────────────────────── */
-
 document.addEventListener('DOMContentLoaded', () => App.init());

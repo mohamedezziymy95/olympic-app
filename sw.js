@@ -394,7 +394,7 @@ self.addEventListener('push', (event) => {
     data = event.data.json();
   } catch {
     data = {
-      title: 'أولمبياد المعرفة',
+      title: 'أولمبياد الفيزياء والكيمياء ',
       body : event.data.text(),
       icon : './assets/icons/icon-192.png',
     };
@@ -416,7 +416,7 @@ self.addEventListener('push', (event) => {
   };
 
   event.waitUntil(
-    self.registration.showNotification(data.title || 'أولمبياد المعرفة', options)
+    self.registration.showNotification(data.title || 'أولمبياد الفيزياء والكيمياء ', options)
   );
 });
 

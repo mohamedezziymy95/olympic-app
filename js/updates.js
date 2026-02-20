@@ -431,5 +431,4 @@ const Updates = (() => {
     setJsonUrl: (url) => { CONFIG.JSON_URL = url; },
   };
 
-
 })();

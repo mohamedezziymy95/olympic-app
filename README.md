@@ -1,6 +1,6 @@
 Markdown
 
-# 🏆 أولمبياد المعرفة — تطبيق PWA تعليمي
+# 🏆 أولمبياد الفيزياء والكيمياء  — تطبيق PWA تعليمي
 
 > تطبيق ويب تقدمي (PWA) للتحضير للأولمبياد، يتضمن دروس وتمارين تفاعلية مع إمكانية إرسال الإجابات عبر WhatsApp.
 
@@ -145,7 +145,7 @@ npm init -y
 npm install @capacitor/core @capacitor/cli
 
 # تهيئة Capacitor
-npx cap init "أولمبياد المعرفة" "com.olympic.app" --web-dir "."
+npx cap init "أولمبياد الفيزياء والكيمياء " "com.olympic.app" --web-dir "."
 2. إنشاء تطبيق Android
 Bash
 
@@ -183,7 +183,7 @@ JSON
 
 {
   "appId": "com.olympic.app",
-  "appName": "أولمبياد المعرفة",
+  "appName": "أولمبياد الفيزياء والكيمياء ",
   "webDir": ".",
   "server": {
     "androidScheme": "https"
@@ -264,7 +264,7 @@ F12 → Lighthouse
 هذا المشروع مفتوح المصدر للاستخدام التعليمي.
 
 👨‍💻 المطور
-تم تطويره لأغراض تعليمية — أولمبياد المعرفة 2025
+تم تطويره لأغراض تعليمية —  أولمبياد الفيزياء والكيمياء 2025
 
 text
 
