@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="description" content="Application éducative - Equipe Olympiade, Lycée Al Wifaq Qualifiant">
+    <meta name="theme-color" content="#1a73e8">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="OlympApp">
+
+    <title>Equipe Olympiade - Lycée Al Wifaq</title>
+
+    <!-- Manifest for PWA -->
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="icons/icon-192.png">
+
+    <!-- FontAwesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap">
+
+    <!-- Main Stylesheet -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <!-- ===================== SPLASH SCREEN ===================== -->
+    <div id="splash-screen" class="splash-screen">
+        <div class="splash-content">
+            <div class="splash-icon">
+                <i class="fas fa-atom fa-spin"></i>
+            </div>
+            <h1 class="splash-title">Equipe Olympiade</h1>
+            <p class="splash-subtitle">Lycée Al Wifaq Qualifiant</p>
+            <div class="splash-loader">
+                <div class="splash-loader-bar"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===================== NOTIFICATION POPUP ===================== -->
+    <div id="notification-popup" class="notification-popup hidden">
+        <div class="notification-popup-content">
+            <div class="notification-popup-icon">
+                <i class="fas fa-bell fa-shake"></i>
+            </div>
+            <h3>🔔 Nouveaux documents disponibles</h3>
+            <p id="notification-popup-message">De nouvelles ressources ont été ajoutées.</p>
+            <div id="notification-popup-list" class="notification-popup-list"></div>
+            <button id="notification-popup-close" class="btn btn-primary btn-block">
+                <i class="fas fa-check"></i> D'accord, merci !
+            </button>
+        </div>
+    </div>
+
+    <!-- ===================== PWA INSTALL BANNER ===================== -->
+    <div id="pwa-install-banner" class="pwa-install-banner hidden">
+        <div class="pwa-install-content">
+            <div class="pwa-install-info">
+                <i class="fas fa-download"></i>
+                <span>Installer l'application sur votre appareil</span>
+            </div>
+            <div class="pwa-install-actions">
+                <button id="pwa-install-btn" class="btn btn-sm btn-primary">Installer</button>
+                <button id="pwa-install-dismiss" class="btn btn-sm btn-ghost">Plus tard</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===================== HEADER ===================== -->
+    <header class="header" id="header">
+        <div class="header-top">
+            <div class="header-brand">
+                <div class="header-logo">
+                    <i class="fas fa-atom"></i>
+                </div>
+                <div class="header-titles">
+                    <h1 class="header-title">Equipe Olympiade</h1>
+                    <p class="header-subtitle">Lycée Al Wifaq Qualifiant</p>
+                </div>
+            </div>
+            <div class="header-actions">
+                <button id="notification-bell" class="header-btn" aria-label="Notifications" title="Notifications">
+                    <i class="fas fa-bell"></i>
+                    <span id="notification-badge" class="badge hidden">0</span>
+                </button>
+                <button id="theme-toggle" class="header-btn" aria-label="Changer le thème" title="Changer le thème">
+                    <i class="fas fa-moon" id="theme-icon"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Search Bar -->
+        <div class="search-container">
+            <div class="search-wrapper">
+                <i class="fas fa-search search-icon"></i>
+                <input
+                    type="text"
+                    id="search-input"
+                    class="search-input"
+                    placeholder="Rechercher un document..."
+                    autocomplete="off"
+                >
+                <button id="search-clear" class="search-clear hidden" aria-label="Effacer">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- ===================== SEARCH RESULTS OVERLAY ===================== -->
+    <div id="search-results" class="search-results hidden">
+        <div class="search-results-header">
+            <h3><i class="fas fa-search"></i> Résultats de recherche</h3>
+            <button id="search-results-close" class="btn btn-ghost btn-sm">
+                <i class="fas fa-times"></i> Fermer
+            </button>
+        </div>
+        <div id="search-results-list" class="search-results-list">
+            <!-- Dynamically populated -->
+        </div>
+        <div id="search-no-results" class="search-no-results hidden">
+            <i class="fas fa-folder-open"></i>
+            <p>Aucun document trouvé</p>
+        </div>
+    </div>
+
+    <!-- ===================== MAIN CONTENT ===================== -->
+    <main class="main-content" id="main-content">
+
+        <!-- Welcome Section -->
+        <section class="welcome-section animate-fade-in">
+            <div class="welcome-card">
+                <div class="welcome-text">
+                    <h2>Bienvenue ! 👋</h2>
+                    <p>
+                        Accédez à toutes vos ressources pédagogiques : résumés de cours,
+                        exercices, tests et documents supplémentaires.
+                    </p>
+                </div>
+                <div class="welcome-illustration">
+                    <i class="fas fa-graduation-cap"></i>
+                </div>
+            </div>
+        </section>
+
+        <!-- Stats Bar -->
+        <section class="stats-bar animate-fade-in" style="animation-delay: 0.1s;">
+            <div class="stat-item">
+                <div class="stat-icon"><i class="fas fa-file-alt"></i></div>
+                <div class="stat-info">
+                    <span id="stat-total" class="stat-number">0</span>
+                    <span class="stat-label">Documents</span>
+                </div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-icon downloaded"><i class="fas fa-cloud-download-alt"></i></div>
+                <div class="stat-info">
+                    <span id="stat-downloaded" class="stat-number">0</span>
+                    <span class="stat-label">Téléchargés</span>
+                </div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-icon new-files"><i class="fas fa-sparkles"></i></div>
+                <div class="stat-info">
+                    <span id="stat-new" class="stat-number">0</span>
+                    <span class="stat-label">Nouveaux</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Categories Section -->
+        <section class="section animate-fade-in" style="animation-delay: 0.2s;">
+            <div class="section-header">
+                <h2 class="section-title">
+                    <i class="fas fa-th-large"></i> Catégories
+                </h2>
+            </div>
+            <div class="categories-grid">
+                <!-- Résumés de cours -->
+                <a href="pages/resumes.html" class="category-card category-resumes">
+                    <div class="category-icon">
+                        <i class="fas fa-book-open"></i>
+                    </div>
+                    <div class="category-info">
+                        <h3>Résumés de cours</h3>
+                        <p><span id="count-resumes">0</span> documents</p>
+                    </div>
+                    <div class="category-arrow">
+                        <i class="fas fa-chevron-right"></i>
+                    </div>
+                    <span id="badge-resumes" class="category-badge hidden">0</span>
+                </a>
+
+                <!-- Exercices -->
+                <a href="pages/exercices.html" class="category-card category-exercices">
+                    <div class="category-icon">
+                        <i class="fas fa-pencil-alt"></i>
+                    </div>
+                    <div class="category-info">
+                        <h3>Exercices</h3>
+                        <p><span id="count-exercices">0</span> documents</p>
+                    </div>
+                    <div class="category-arrow">
+                        <i class="fas fa-chevron-right"></i>
+                    </div>
+                    <span id="badge-exercices" class="category-badge hidden">0</span>
+                </a>
+
+                <!-- Tests et contrôles -->
+                <a href="pages/tests.html" class="category-card category-tests">
+                    <div class="category-icon">
+                        <i class="fas fa-clipboard-check"></i>
+                    </div>
+                    <div class="category-info">
+                        <h3>Tests et contrôles</h3>
+                        <p><span id="count-tests">0</span> documents</p>
+                    </div>
+                    <div class="category-arrow">
+                        <i class="fas fa-chevron-right"></i>
+                    </div>
+                    <span id="badge-tests" class="category-badge hidden">0</span>
+                </a>
+
+                <!-- Documents supplémentaires -->
+                <a href="pages/documents.html" class="category-card category-documents">
+                    <div class="category-icon">
+                        <i class="fas fa-folder-plus"></i>
+                    </div>
+                    <div class="category-info">
+                        <h3>Documents supplémentaires</h3>
+                        <p><span id="count-documents">0</span> documents</p>
+                    </div>
+                    <div class="category-arrow">
+                        <i class="fas fa-chevron-right"></i>
+                    </div>
+                    <span id="badge-documents" class="category-badge hidden">0</span>
+                </a>
+            </div>
+        </section>
+
+        <!-- Latest Documents Section -->
+        <section class="section animate-fade-in" style="animation-delay: 0.3s;">
+            <div class="section-header">
+                <h2 class="section-title">
+                    <i class="fas fa-clock"></i> 📢 Derniers documents ajoutés
+                </h2>
+            </div>
+            <div id="latest-documents" class="documents-list">
+                <!-- Dynamically populated by app.js -->
+                <div class="loading-skeleton">
+                    <div class="skeleton-card"></div>
+                    <div class="skeleton-card"></div>
+                    <div class="skeleton-card"></div>
+                </div>
+            </div>
+            <div id="no-documents" class="empty-state hidden">
+                <i class="fas fa-inbox"></i>
+                <p>Aucun document disponible pour le moment.</p>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ===================== DOWNLOAD PROGRESS TOAST ===================== -->
+    <div id="download-toast" class="download-toast hidden">
+        <div class="download-toast-content">
+            <div class="download-toast-icon">
+                <i class="fas fa-circle-notch fa-spin"></i>
+            </div>
+            <div class="download-toast-info">
+                <span id="download-toast-title" class="download-toast-title">Téléchargement...</span>
+                <div class="download-progress-bar">
+                    <div id="download-progress" class="download-progress"></div>
+                </div>
+            </div>
+            <div id="download-toast-check" class="download-toast-check hidden">
+                <i class="fas fa-check-circle"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===================== FOOTER ===================== -->
+    <footer class="footer">
+        <div class="footer-content">
+            <p>
+                <i class="fas fa-atom"></i> Equipe Olympiade &copy; <span id="footer-year">2025</span>
+            </p>
+            <p class="footer-sub">Lycée Al Wifaq Qualifiant — Tous droits réservés</p>
+        </div>
+    </footer>
+
+    <!-- ===================== BOTTOM NAV (Mobile) ===================== -->
+    <nav class="bottom-nav" id="bottom-nav">
+        <a href="index.html" class="bottom-nav-item active" title="Accueil">
+            <i class="fas fa-home"></i>
+            <span>Accueil</span>
+        </a>
+        <a href="pages/resumes.html" class="bottom-nav-item" title="Résumés">
+            <i class="fas fa-book-open"></i>
+            <span>Résumés</span>
+        </a>
+        <a href="pages/exercices.html" class="bottom-nav-item" title="Exercices">
+            <i class="fas fa-pencil-alt"></i>
+            <span>Exercices</span>
+        </a>
+        <a href="pages/tests.html" class="bottom-nav-item" title="Tests">
+            <i class="fas fa-clipboard-check"></i>
+            <span>Tests</span>
+        </a>
+        <a href="pages/documents.html" class="bottom-nav-item" title="Documents">
+            <i class="fas fa-folder-plus"></i>
+            <span>Docs</span>
+        </a>
+    </nav>
+
+    <!-- ===================== SCRIPTS ===================== -->
+    <script src="js/app.js"></script>
+    <script src="js/notifications.js"></script>
+
+    <!-- Service Worker Registration -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                    .then(reg => console.log('[SW] Registered:', reg.scope))
+                    .catch(err => console.warn('[SW] Registration failed:', err));
+            });
+        }
+
+        // Footer year
+        document.getElementById('footer-year').textContent = new Date().getFullYear();
+    </script>
+
+</body>
+</html>

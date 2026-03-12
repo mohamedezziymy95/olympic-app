@@ -1,0 +1,1369 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="description" content="Documents supplémentaires - Equipe Olympiade, Lycée Al Wifaq Qualifiant">
+    <meta name="theme-color" content="#1a73e8">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+    <title>Documents supplémentaires — Equipe Olympiade</title>
+
+    <!-- Manifest -->
+    <link rel="manifest" href="../manifest.json">
+    <link rel="apple-touch-icon" href="../icons/icon-192.png">
+
+    <!-- FontAwesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap">
+
+    <!-- Main Stylesheet -->
+    <link rel="stylesheet" href="../css/style.css">
+
+    <!-- Page-specific styles -->
+    <style>
+        .main-content {
+            margin-top: 68px;
+        }
+
+        .category-page-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: var(--bg-header);
+            border-bottom: 1px solid var(--border-color);
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px var(--page-padding);
+            height: 68px;
+            transition: background-color var(--transition), box-shadow var(--transition);
+        }
+
+        .category-page-header.scrolled {
+            box-shadow: var(--shadow-md);
+        }
+
+        .category-page-header-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex: 1;
+            min-width: 0;
+        }
+
+        .category-page-header-right {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            flex-shrink: 0;
+        }
+
+        .category-page-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            flex-shrink: 0;
+            background: var(--cat-documents-bg);
+            color: var(--cat-documents);
+        }
+
+        .category-page-titles {
+            min-width: 0;
+        }
+
+        .category-page-titles h1 {
+            font-size: 1.05rem;
+            font-weight: 800;
+            letter-spacing: -0.3px;
+            color: var(--text-primary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .category-page-titles p {
+            font-size: 0.72rem;
+            color: var(--text-muted);
+        }
+
+        .page-search-section {
+            margin-bottom: 16px;
+        }
+
+        .page-search-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .page-search-wrapper .search-icon {
+            position: absolute;
+            left: 14px;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            pointer-events: none;
+            transition: color var(--transition);
+        }
+
+        .page-search-wrapper .search-input {
+            width: 100%;
+            padding: 12px 42px 12px 42px;
+            background: var(--bg-input);
+            color: var(--text-primary);
+            border: 2px solid transparent;
+            border-radius: var(--radius-lg);
+            font-size: 0.88rem;
+            transition: all var(--transition);
+        }
+
+        .page-search-wrapper .search-input:focus {
+            border-color: var(--primary);
+            background: var(--bg-card);
+            box-shadow: 0 0 0 4px var(--primary-bg);
+        }
+
+        .page-search-wrapper .search-input:focus ~ .search-icon {
+            color: var(--primary);
+        }
+
+        .page-search-clear {
+            position: absolute;
+            right: 8px;
+            width: 30px;
+            height: 30px;
+            border-radius: var(--radius-full);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            font-size: 0.75rem;
+            transition: all var(--transition);
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+
+        .page-search-clear:hover {
+            background: var(--primary-bg);
+            color: var(--primary);
+        }
+
+        .filter-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 14px;
+            padding: 10px 14px;
+            background: var(--bg-card);
+            border-radius: var(--radius-sm);
+            box-shadow: var(--shadow-card);
+        }
+
+        .filter-bar-left {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.82rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .filter-bar-left i {
+            color: var(--cat-documents);
+            font-size: 0.75rem;
+        }
+
+        .filter-bar-count {
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .filter-sort-select {
+            font-family: var(--font-family);
+            font-size: 0.8rem;
+            color: var(--primary);
+            background: var(--primary-bg);
+            border: none;
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            outline: none;
+            transition: all var(--transition);
+        }
+
+        .filter-sort-select:focus {
+            box-shadow: 0 0 0 3px var(--primary-bg);
+        }
+
+        .page-documents-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .page-empty-search {
+            text-align: center;
+            padding: 50px 20px;
+            color: var(--text-muted);
+        }
+
+        .page-empty-search i {
+            font-size: 2.5rem;
+            margin-bottom: 14px;
+            opacity: 0.3;
+        }
+
+        .page-empty-search p {
+            font-size: 0.9rem;
+        }
+
+        .category-info-banner {
+            background: var(--cat-documents-bg);
+            border-left: 4px solid var(--cat-documents);
+            border-radius: var(--radius-sm);
+            padding: 14px 16px;
+            margin-bottom: 18px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .category-info-banner i {
+            font-size: 1.4rem;
+            color: var(--cat-documents);
+            flex-shrink: 0;
+        }
+
+        .category-info-banner-text h3 {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 2px;
+        }
+
+        .category-info-banner-text p {
+            font-size: 0.78rem;
+            color: var(--text-secondary);
+            line-height: 1.4;
+        }
+
+        .category-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 18px;
+        }
+
+        .category-stat-card {
+            background: var(--bg-card);
+            border-radius: var(--radius-sm);
+            padding: 12px 14px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: var(--shadow-card);
+        }
+
+        .category-stat-icon {
+            width: 34px;
+            height: 34px;
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            flex-shrink: 0;
+        }
+
+        .category-stat-icon.total {
+            background: var(--cat-documents-bg);
+            color: var(--cat-documents);
+        }
+
+        .category-stat-icon.new {
+            background: var(--accent-orange-bg);
+            color: var(--accent-orange);
+        }
+
+        .category-stat-info .stat-number {
+            font-size: 1.1rem;
+            font-weight: 800;
+            color: var(--text-primary);
+            line-height: 1.2;
+        }
+
+        .category-stat-info .stat-label {
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .scroll-top-btn {
+            position: fixed;
+            bottom: calc(var(--bottom-nav-height) + 16px);
+            right: 16px;
+            width: 44px;
+            height: 44px;
+            border-radius: var(--radius-full);
+            background: var(--primary-gradient);
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            box-shadow: var(--shadow-primary);
+            z-index: 800;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(20px);
+            transition: all var(--transition);
+            border: none;
+            cursor: pointer;
+        }
+
+        .scroll-top-btn.visible {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .scroll-top-btn:active {
+            transform: scale(0.9);
+        }
+
+        /* Document type tag chips */
+        .doc-type-filters {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 14px;
+            flex-wrap: wrap;
+        }
+
+        .doc-type-label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            flex-shrink: 0;
+        }
+
+        .doc-type-chip {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.72rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all var(--transition);
+            border: 1.5px solid var(--border-color);
+            background: var(--bg-card);
+            color: var(--text-secondary);
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        .doc-type-chip:hover {
+            border-color: var(--cat-documents);
+            color: var(--cat-documents);
+        }
+
+        .doc-type-chip.active {
+            background: var(--cat-documents);
+            color: #ffffff;
+            border-color: var(--cat-documents);
+        }
+
+        [data-theme="dark"] .doc-type-chip.active {
+            background: var(--cat-documents);
+            color: #0f172a;
+        }
+
+        /* Document type dots */
+        .doc-type-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .doc-type-dot.formulaire { background: var(--cat-documents); }
+        .doc-type-dot.corrige { background: #ef4444; }
+        .doc-type-dot.guide { background: #eab308; }
+        .doc-type-dot.planning { background: var(--accent-green); }
+        .doc-type-dot.reference { background: var(--primary); }
+        .doc-type-dot.autre { background: var(--text-muted); }
+
+        /* Type legend */
+        .type-legend {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 10px 14px;
+            background: var(--bg-card);
+            border-radius: var(--radius-sm);
+            box-shadow: var(--shadow-card);
+            margin-bottom: 14px;
+            flex-wrap: wrap;
+        }
+
+        .type-legend-title {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-right: 2px;
+        }
+
+        .type-legend-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.72rem;
+            color: var(--text-muted);
+        }
+
+        /* Info box */
+        .info-box {
+            background: var(--accent-purple-bg);
+            border-left: 4px solid var(--accent-purple);
+            border-radius: var(--radius-sm);
+            padding: 12px 14px;
+            margin-bottom: 18px;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        .info-box i {
+            color: var(--accent-purple);
+            font-size: 1rem;
+            margin-top: 2px;
+            flex-shrink: 0;
+        }
+
+        .info-box p {
+            font-size: 0.78rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        .info-box strong {
+            color: var(--text-primary);
+        }
+
+        /* Quick links section */
+        .quick-links {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 18px;
+        }
+
+        .quick-link-card {
+            background: var(--bg-card);
+            border-radius: var(--radius-sm);
+            padding: 14px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            gap: 8px;
+            box-shadow: var(--shadow-card);
+            transition: all var(--transition);
+            cursor: pointer;
+            border: 1.5px solid transparent;
+        }
+
+        .quick-link-card:hover {
+            border-color: var(--cat-documents);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .quick-link-card:active {
+            transform: scale(0.97);
+        }
+
+        .quick-link-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+        }
+
+        .quick-link-icon.formulaires {
+            background: var(--cat-documents-bg);
+            color: var(--cat-documents);
+        }
+
+        .quick-link-icon.corriges {
+            background: rgba(239, 68, 68, 0.08);
+            color: #ef4444;
+        }
+
+        .quick-link-icon.guides {
+            background: rgba(234, 179, 8, 0.08);
+            color: #eab308;
+        }
+
+        .quick-link-icon.autres {
+            background: var(--primary-bg);
+            color: var(--primary);
+        }
+
+        .quick-link-title {
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .quick-link-count {
+            font-size: 0.68rem;
+            color: var(--text-muted);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===================== HEADER ===================== -->
+    <header class="category-page-header" id="page-header">
+        <div class="category-page-header-left">
+            <a href="../index.html" class="page-back-btn" title="Retour à l'accueil">
+                <i class="fas fa-arrow-left"></i>
+            </a>
+            <div class="category-page-icon">
+                <i class="fas fa-folder-plus"></i>
+            </div>
+            <div class="category-page-titles">
+                <h1>Documents supplémentaires</h1>
+                <p id="page-subtitle">Chargement...</p>
+            </div>
+        </div>
+        <div class="category-page-header-right">
+            <button id="page-theme-toggle" class="header-btn" aria-label="Changer le thème" title="Changer le thème">
+                <i class="fas fa-moon" id="page-theme-icon"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- ===================== MAIN CONTENT ===================== -->
+    <main class="main-content" id="main-content">
+
+        <!-- Category Info Banner -->
+        <div class="category-info-banner animate-fade-in">
+            <i class="fas fa-folder-plus"></i>
+            <div class="category-info-banner-text">
+                <h3>📁 Documents supplémentaires</h3>
+                <p>Formulaires, corrigés, guides de préparation, plannings et autres ressources utiles pour compléter vos révisions.</p>
+            </div>
+        </div>
+
+        <!-- Info Box -->
+        <div class="info-box animate-fade-in" style="animation-delay: 0.05s;">
+            <i class="fas fa-info-circle"></i>
+            <p><strong>Astuce :</strong> Imprimez les formulaires et le tableau périodique pour les avoir toujours à portée de main pendant vos révisions.</p>
+        </div>
+
+        <!-- Category Stats -->
+        <div class="category-stats animate-fade-in" style="animation-delay: 0.1s;">
+            <div class="category-stat-card">
+                <div class="category-stat-icon total">
+                    <i class="fas fa-file-alt"></i>
+                </div>
+                <div class="category-stat-info">
+                    <span id="cat-stat-total" class="stat-number">0</span>
+                    <span class="stat-label">Documents</span>
+                </div>
+            </div>
+            <div class="category-stat-card">
+                <div class="category-stat-icon new">
+                    <i class="fas fa-sparkles"></i>
+                </div>
+                <div class="category-stat-info">
+                    <span id="cat-stat-new" class="stat-number">0</span>
+                    <span class="stat-label">Nouveaux</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Links -->
+        <div class="quick-links animate-fade-in" style="animation-delay: 0.12s;">
+            <div class="quick-link-card" data-quick-filter="formulaire">
+                <div class="quick-link-icon formulaires">
+                    <i class="fas fa-calculator"></i>
+                </div>
+                <span class="quick-link-title">Formulaires</span>
+                <span class="quick-link-count" id="quick-count-formulaire">0 docs</span>
+            </div>
+            <div class="quick-link-card" data-quick-filter="corrige">
+                <div class="quick-link-icon corriges">
+                    <i class="fas fa-check-double"></i>
+                </div>
+                <span class="quick-link-title">Corrigés</span>
+                <span class="quick-link-count" id="quick-count-corrige">0 docs</span>
+            </div>
+            <div class="quick-link-card" data-quick-filter="guide">
+                <div class="quick-link-icon guides">
+                    <i class="fas fa-compass"></i>
+                </div>
+                <span class="quick-link-title">Guides</span>
+                <span class="quick-link-count" id="quick-count-guide">0 docs</span>
+            </div>
+            <div class="quick-link-card" data-quick-filter="autre">
+                <div class="quick-link-icon autres">
+                    <i class="fas fa-ellipsis-h"></i>
+                </div>
+                <span class="quick-link-title">Autres</span>
+                <span class="quick-link-count" id="quick-count-autre">0 docs</span>
+            </div>
+        </div>
+
+        <!-- Type Legend -->
+        <div class="type-legend animate-fade-in" style="animation-delay: 0.14s;">
+            <span class="type-legend-title"><i class="fas fa-tags"></i> Types :</span>
+            <span class="type-legend-item"><span class="doc-type-dot formulaire"></span> Formulaire</span>
+            <span class="type-legend-item"><span class="doc-type-dot corrige"></span> Corrigé</span>
+            <span class="type-legend-item"><span class="doc-type-dot guide"></span> Guide</span>
+            <span class="type-legend-item"><span class="doc-type-dot planning"></span> Planning</span>
+            <span class="type-legend-item"><span class="doc-type-dot reference"></span> Référence</span>
+            <span class="type-legend-item"><span class="doc-type-dot autre"></span> Autre</span>
+        </div>
+
+        <!-- Type Filter Chips -->
+        <div class="doc-type-filters animate-fade-in" style="animation-delay: 0.16s;">
+            <span class="doc-type-label"><i class="fas fa-filter"></i> Filtrer :</span>
+            <button class="doc-type-chip active" data-filter="all">Tous</button>
+            <button class="doc-type-chip" data-filter="formulaire">Formulaires</button>
+            <button class="doc-type-chip" data-filter="corrige">Corrigés</button>
+            <button class="doc-type-chip" data-filter="guide">Guides</button>
+            <button class="doc-type-chip" data-filter="planning">Plannings</button>
+            <button class="doc-type-chip" data-filter="reference">Références</button>
+            <button class="doc-type-chip" data-filter="autre">Autres</button>
+        </div>
+
+        <!-- Search -->
+        <div class="page-search-section animate-fade-in" style="animation-delay: 0.2s;">
+            <div class="page-search-wrapper">
+                <i class="fas fa-search search-icon"></i>
+                <input
+                    type="text"
+                    id="page-search-input"
+                    class="search-input"
+                    placeholder="Rechercher un document..."
+                    autocomplete="off"
+                >
+                <button id="page-search-clear" class="page-search-clear hidden" aria-label="Effacer">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Sort / Filter Bar -->
+        <div class="filter-bar animate-fade-in" style="animation-delay: 0.24s;">
+            <div class="filter-bar-left">
+                <i class="fas fa-list-ul"></i>
+                <span><span class="filter-bar-count" id="visible-count">0</span> documents</span>
+            </div>
+            <select id="sort-select" class="filter-sort-select" title="Trier par">
+                <option value="date-desc">Plus récents</option>
+                <option value="date-asc">Plus anciens</option>
+                <option value="title-asc">A → Z</option>
+                <option value="title-desc">Z → A</option>
+                <option value="new-first">Nouveaux d'abord</option>
+            </select>
+        </div>
+
+        <!-- Documents List -->
+        <div id="documents-container" class="page-documents-list animate-fade-in" style="animation-delay: 0.28s;">
+            <div class="loading-skeleton" id="loading-skeleton">
+                <div class="skeleton-card"></div>
+                <div class="skeleton-card"></div>
+                <div class="skeleton-card"></div>
+                <div class="skeleton-card"></div>
+                <div class="skeleton-card"></div>
+            </div>
+        </div>
+
+        <!-- Empty State -->
+        <div id="empty-state" class="empty-state hidden">
+            <i class="fas fa-inbox"></i>
+            <p>Aucun document supplémentaire disponible pour le moment.</p>
+        </div>
+
+        <!-- Empty Search -->
+        <div id="empty-search" class="page-empty-search hidden">
+            <i class="fas fa-search"></i>
+            <p>Aucun document ne correspond à votre recherche.</p>
+        </div>
+
+        <!-- Empty Filter -->
+        <div id="empty-filter" class="page-empty-search hidden">
+            <i class="fas fa-filter"></i>
+            <p>Aucun document trouvé pour ce filtre.</p>
+        </div>
+
+    </main>
+
+    <!-- ===================== DOWNLOAD TOAST ===================== -->
+    <div id="download-toast" class="download-toast hidden">
+        <div class="download-toast-content">
+            <div class="download-toast-icon">
+                <i class="fas fa-circle-notch fa-spin"></i>
+            </div>
+            <div class="download-toast-info">
+                <span id="download-toast-title" class="download-toast-title">Téléchargement...</span>
+                <div class="download-progress-bar">
+                    <div id="download-progress" class="download-progress"></div>
+                </div>
+            </div>
+            <div id="download-toast-check" class="download-toast-check hidden">
+                <i class="fas fa-check-circle"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===================== SCROLL TO TOP ===================== -->
+    <button id="scroll-top-btn" class="scroll-top-btn" title="Retour en haut" aria-label="Retour en haut">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <!-- ===================== BOTTOM NAV ===================== -->
+    <nav class="bottom-nav">
+        <a href="../index.html" class="bottom-nav-item" title="Accueil">
+            <i class="fas fa-home"></i>
+            <span>Accueil</span>
+        </a>
+        <a href="resumes.html" class="bottom-nav-item" title="Résumés">
+            <i class="fas fa-book-open"></i>
+            <span>Résumés</span>
+        </a>
+        <a href="exercices.html" class="bottom-nav-item" title="Exercices">
+            <i class="fas fa-pencil-alt"></i>
+            <span>Exercices</span>
+        </a>
+        <a href="tests.html" class="bottom-nav-item" title="Tests">
+            <i class="fas fa-clipboard-check"></i>
+            <span>Tests</span>
+        </a>
+        <a href="documents.html" class="bottom-nav-item active" title="Documents">
+            <i class="fas fa-folder-plus"></i>
+            <span>Docs</span>
+        </a>
+    </nav>
+
+    <!-- ===================== SCRIPTS ===================== -->
+    <script src="../js/app.js"></script>
+    <script>
+    (function () {
+        'use strict';
+
+        /* ===================== CONFIGURATION ===================== */
+        const CATEGORY_KEY = 'documents';
+
+        /* ===================== STATE ===================== */
+        let allCategoryFiles = [];
+        let filteredFiles = [];
+        let currentSort = 'date-desc';
+        let currentDocFilter = 'all';
+
+        /* ===================== DOM ===================== */
+        const DOM = {
+            pageSubtitle: document.getElementById('page-subtitle'),
+            pageThemeToggle: document.getElementById('page-theme-toggle'),
+            pageThemeIcon: document.getElementById('page-theme-icon'),
+            searchInput: document.getElementById('page-search-input'),
+            searchClear: document.getElementById('page-search-clear'),
+            sortSelect: document.getElementById('sort-select'),
+            documentsContainer: document.getElementById('documents-container'),
+            loadingSkeleton: document.getElementById('loading-skeleton'),
+            emptyState: document.getElementById('empty-state'),
+            emptySearch: document.getElementById('empty-search'),
+            emptyFilter: document.getElementById('empty-filter'),
+            visibleCount: document.getElementById('visible-count'),
+            catStatTotal: document.getElementById('cat-stat-total'),
+            catStatNew: document.getElementById('cat-stat-new'),
+            scrollTopBtn: document.getElementById('scroll-top-btn'),
+            pageHeader: document.getElementById('page-header'),
+            downloadToast: document.getElementById('download-toast'),
+            downloadToastTitle: document.getElementById('download-toast-title'),
+            downloadProgress: document.getElementById('download-progress'),
+            downloadToastCheck: document.getElementById('download-toast-check'),
+            typeChips: document.querySelectorAll('.doc-type-chip'),
+            quickLinks: document.querySelectorAll('.quick-link-card'),
+            quickCountFormulaire: document.getElementById('quick-count-formulaire'),
+            quickCountCorrige: document.getElementById('quick-count-corrige'),
+            quickCountGuide: document.getElementById('quick-count-guide'),
+            quickCountAutre: document.getElementById('quick-count-autre'),
+        };
+
+        /* ===================== DOC TYPE DETECTION ===================== */
+        function detectDocType(title) {
+            const t = (title || '').toLowerCase();
+            if (t.includes('formulaire') || t.includes('tableau') || t.includes('constante')) return 'formulaire';
+            if (t.includes('corrigé') || t.includes('corrige') || t.includes('correction')) return 'corrige';
+            if (t.includes('guide') || t.includes('conseil') || t.includes('méthode') || t.includes('methode')) return 'guide';
+            if (t.includes('planning') || t.includes('programme') || t.includes('calendrier')) return 'planning';
+            if (t.includes('liste') || t.includes('référence') || t.includes('reference') || t.includes('tp')) return 'reference';
+            return 'autre';
+        }
+
+        function getDocTypeLabel(type) {
+            const labels = {
+                formulaire: 'Formulaire',
+                corrige: 'Corrigé',
+                guide: 'Guide',
+                planning: 'Planning',
+                reference: 'Référence',
+                autre: 'Autre',
+            };
+            return labels[type] || 'Document';
+        }
+
+        function getDocTypeDotClass(type) {
+            return 'doc-type-dot ' + type;
+        }
+
+        /* ===================== THEME ===================== */
+        function initTheme() {
+            if (window.OlympApp) {
+                window.OlympApp.initTheme();
+            }
+            const theme = document.documentElement.getAttribute('data-theme');
+            updateThemeIcon(theme);
+
+            if (DOM.pageThemeToggle) {
+                DOM.pageThemeToggle.addEventListener('click', () => {
+                    const current = document.documentElement.getAttribute('data-theme');
+                    const next = current === 'dark' ? 'light' : 'dark';
+                    document.documentElement.setAttribute('data-theme', next);
+                    updateThemeIcon(next);
+                    try {
+                        localStorage.setItem('olympiade_theme', JSON.stringify(next));
+                    } catch (e) {}
+                    const meta = document.querySelector('meta[name="theme-color"]');
+                    if (meta) meta.setAttribute('content', next === 'dark' ? '#111827' : '#1a73e8');
+                });
+            }
+        }
+
+        function updateThemeIcon(theme) {
+            if (DOM.pageThemeIcon) {
+                DOM.pageThemeIcon.className = theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+            }
+        }
+
+        /* ===================== LOAD DATA ===================== */
+        async function loadData() {
+            if (!window.OlympApp) {
+                console.error('[Page] OlympApp not available');
+                showError();
+                return;
+            }
+
+            window.OlympApp.CONFIG.baseURL = '../';
+
+            try {
+                const files = await window.OlympApp.loadCategoryPage(CATEGORY_KEY);
+                allCategoryFiles = (files || []).map((f) => ({
+                    ...f,
+                    docType: detectDocType(f.title),
+                }));
+
+                if (DOM.loadingSkeleton) DOM.loadingSkeleton.remove();
+
+                if (allCategoryFiles.length === 0) {
+                    DOM.emptyState.classList.remove('hidden');
+                    DOM.documentsContainer.classList.add('hidden');
+                    DOM.pageSubtitle.textContent = 'Aucun document';
+                    return;
+                }
+
+                DOM.pageSubtitle.textContent = `${allCategoryFiles.length} document${allCategoryFiles.length > 1 ? 's' : ''}`;
+
+                const newCount = allCategoryFiles.filter((f) =>
+                    window.OlympApp.state.newFiles.some((nf) => nf.id === f.id)
+                ).length;
+
+                if (window.OlympApp.animateCounter) {
+                    window.OlympApp.animateCounter(DOM.catStatTotal, allCategoryFiles.length);
+                    window.OlympApp.animateCounter(DOM.catStatNew, newCount);
+                } else {
+                    DOM.catStatTotal.textContent = allCategoryFiles.length;
+                    DOM.catStatNew.textContent = newCount;
+                }
+
+                // Update quick link counts
+                updateQuickLinkCounts();
+
+                sortAndRender();
+            } catch (error) {
+                console.error('[Page] Load error:', error);
+                showError();
+            }
+        }
+
+        /* ===================== QUICK LINK COUNTS ===================== */
+        function updateQuickLinkCounts() {
+            const counts = { formulaire: 0, corrige: 0, guide: 0, autre: 0 };
+
+            allCategoryFiles.forEach((f) => {
+                const dt = f.docType;
+                if (dt === 'formulaire') counts.formulaire++;
+                else if (dt === 'corrige') counts.corrige++;
+                else if (dt === 'guide') counts.guide++;
+                else counts.autre++;
+            });
+
+            if (DOM.quickCountFormulaire) DOM.quickCountFormulaire.textContent = `${counts.formulaire} doc${counts.formulaire > 1 ? 's' : ''}`;
+            if (DOM.quickCountCorrige) DOM.quickCountCorrige.textContent = `${counts.corrige} doc${counts.corrige > 1 ? 's' : ''}`;
+            if (DOM.quickCountGuide) DOM.quickCountGuide.textContent = `${counts.guide} doc${counts.guide > 1 ? 's' : ''}`;
+            if (DOM.quickCountAutre) DOM.quickCountAutre.textContent = `${counts.autre} doc${counts.autre > 1 ? 's' : ''}`;
+        }
+
+        /* ===================== TYPE FILTER ===================== */
+        function filterByDocType(files, type) {
+            if (type === 'all') return files;
+            if (type === 'autre') {
+                // "autre" includes: planning, reference, autre
+                return files.filter((f) => ['planning', 'reference', 'autre'].includes(f.docType));
+            }
+            return files.filter((f) => f.docType === type);
+        }
+
+        /* ===================== SORT ===================== */
+        function sortFiles(files, sortBy) {
+            const sorted = [...files];
+            switch (sortBy) {
+                case 'date-desc':
+                    sorted.sort((a, b) => new Date(b.date || '2000-01-01') - new Date(a.date || '2000-01-01'));
+                    break;
+                case 'date-asc':
+                    sorted.sort((a, b) => new Date(a.date || '2000-01-01') - new Date(b.date || '2000-01-01'));
+                    break;
+                case 'title-asc':
+                    sorted.sort((a, b) => (a.title || '').localeCompare(b.title || '', 'fr'));
+                    break;
+                case 'title-desc':
+                    sorted.sort((a, b) => (b.title || '').localeCompare(a.title || '', 'fr'));
+                    break;
+                case 'new-first':
+                    sorted.sort((a, b) => {
+                        const aNew = window.OlympApp.state.newFiles.some((nf) => nf.id === a.id) ? 1 : 0;
+                        const bNew = window.OlympApp.state.newFiles.some((nf) => nf.id === b.id) ? 1 : 0;
+                        if (bNew !== aNew) return bNew - aNew;
+                        return new Date(b.date || '2000-01-01') - new Date(a.date || '2000-01-01');
+                    });
+                    break;
+            }
+            return sorted;
+        }
+
+        /* ===================== SEARCH ===================== */
+        function filterBySearch(files, query) {
+            if (!query) return files;
+            const normalized = normalizeText(query);
+            return files.filter((file) => {
+                const title = normalizeText(file.title || '');
+                const type = normalizeText(getDocTypeLabel(file.docType));
+                return title.includes(normalized) || type.includes(normalized);
+            });
+        }
+
+        function normalizeText(text) {
+            return text.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim();
+        }
+
+        /* ===================== RENDER ===================== */
+        function sortAndRender() {
+            const query = DOM.searchInput ? DOM.searchInput.value.trim() : '';
+            let files = filterByDocType(allCategoryFiles, currentDocFilter);
+            files = filterBySearch(files, query);
+            files = sortFiles(files, currentSort);
+            filteredFiles = files;
+            renderDocuments(files, query);
+        }
+
+        function renderDocuments(files, query) {
+            DOM.documentsContainer.innerHTML = '';
+            DOM.visibleCount.textContent = files.length;
+
+            DOM.emptyState.classList.add('hidden');
+            DOM.emptySearch.classList.add('hidden');
+            DOM.emptyFilter.classList.add('hidden');
+
+            if (files.length === 0 && query) {
+                DOM.emptySearch.classList.remove('hidden');
+                DOM.documentsContainer.classList.add('hidden');
+                return;
+            }
+
+            if (files.length === 0 && currentDocFilter !== 'all') {
+                DOM.emptyFilter.classList.remove('hidden');
+                DOM.documentsContainer.classList.add('hidden');
+                return;
+            }
+
+            if (files.length === 0) {
+                DOM.emptyState.classList.remove('hidden');
+                DOM.documentsContainer.classList.add('hidden');
+                return;
+            }
+
+            DOM.documentsContainer.classList.remove('hidden');
+
+            files.forEach((file) => {
+                const card = createDocCard(file);
+                DOM.documentsContainer.appendChild(card);
+            });
+        }
+
+        function createDocCard(file) {
+            const downloadedFiles = window.OlympApp.Storage.get('olympiade_downloaded_files') || [];
+            const isDownloaded = downloadedFiles.includes(file.id);
+            const isNew = window.OlympApp.state.newFiles.some((nf) => nf.id === file.id);
+            const fileType = window.OlympApp.getFileType(file.file);
+            const iconClass = window.OlympApp.getFileIconClass(fileType);
+            const docType = file.docType || 'autre';
+
+            const card = document.createElement('div');
+            card.className = 'document-card' + (isNew && !isDownloaded ? ' is-new' : '');
+            card.setAttribute('data-file-id', file.id);
+            card.setAttribute('data-doc-type', docType);
+
+            card.innerHTML = `
+                <div class="document-icon ${fileType}">
+                    <i class="${iconClass}"></i>
+                </div>
+                <div class="document-info">
+                    <div class="document-title">${window.OlympApp.escapeHTML(file.title)}</div>
+                    <div class="document-meta">
+                        <span class="document-type" style="display: flex; align-items: center; gap: 4px;">
+                            <span class="${getDocTypeDotClass(docType)}" style="width:7px;height:7px;"></span>
+                            ${getDocTypeLabel(docType)}
+                        </span>
+                        ${file.date ? `<span class="document-date"><i class="far fa-calendar-alt"></i> ${window.OlympApp.formatDate(file.date)}</span>` : ''}
+                    </div>
+                </div>
+                <div class="document-actions">
+                    ${isNew && !isDownloaded ? '<span class="new-badge"><i class="fas fa-star"></i> Nouveau</span>' : ''}
+                    <button class="btn-download ${isDownloaded ? 'btn-downloaded' : ''}"
+                            data-file-path="${window.OlympApp.escapeHTML(file.file)}"
+                            data-file-id="${file.id}"
+                            data-file-title="${window.OlympApp.escapeHTML(file.title)}"
+                            ${isDownloaded ? 'title="Déjà téléchargé"' : 'title="Télécharger"'}>
+                        <i class="fas ${isDownloaded ? 'fa-check' : 'fa-download'}"></i>
+                    </button>
+                </div>
+            `;
+
+            const downloadBtn = card.querySelector('.btn-download');
+            if (downloadBtn && !isDownloaded) {
+                downloadBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    handlePageDownload(file, downloadBtn, card);
+                });
+            }
+
+            return card;
+        }
+
+        /* ===================== DOWNLOAD ===================== */
+        async function handlePageDownload(file, btnElement, cardElement) {
+            const filePath = '../' + file.file;
+            const fileName = file.file.split('/').pop();
+
+            showPageDownloadToast(file.title);
+
+            try {
+                animatePageProgress(0);
+                const response = await fetch(filePath);
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+                const reader = response.body ? response.body.getReader() : null;
+                const contentLength = response.headers.get('Content-Length');
+                let receivedLength = 0;
+                let chunks = [];
+
+                if (reader && contentLength) {
+                    const total = parseInt(contentLength, 10);
+                    while (true) {
+                        const { done, value } = await reader.read();
+                        if (done) break;
+                        chunks.push(value);
+                        receivedLength += value.length;
+                        const percent = Math.min(Math.round((receivedLength / total) * 100), 100);
+                        animatePageProgress(percent);
+                    }
+                    const blob = new Blob(chunks);
+                    triggerDownload(blob, fileName);
+                } else {
+                    simulatePageProgress();
+                    const blob = await response.blob();
+                    triggerDownload(blob, fileName);
+                }
+
+                completePageDownload(file, btnElement, cardElement);
+            } catch (error) {
+                console.error('[Download] Error:', error);
+                const a = document.createElement('a');
+                a.href = filePath;
+                a.download = fileName;
+                a.target = '_blank';
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+                completePageDownload(file, btnElement, cardElement);
+            }
+        }
+
+        function triggerDownload(blob, fileName) {
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = fileName;
+            a.style.display = 'none';
+            document.body.appendChild(a);
+            a.click();
+            setTimeout(() => {
+                URL.revokeObjectURL(url);
+                a.remove();
+            }, 1000);
+        }
+
+        function completePageDownload(file, btnElement, cardElement) {
+            window.OlympApp.Storage.addToArray('olympiade_downloaded_files', file.id);
+
+            if (window.OlympApp.state) {
+                window.OlympApp.state.newFiles = window.OlympApp.state.newFiles.filter(
+                    (f) => f.id !== file.id
+                );
+            }
+
+            if (btnElement) {
+                btnElement.classList.add('btn-downloaded');
+                btnElement.innerHTML = '<i class="fas fa-check"></i>';
+                btnElement.setAttribute('title', 'Déjà téléchargé');
+                const newBtn = btnElement.cloneNode(true);
+                btnElement.parentNode.replaceChild(newBtn, btnElement);
+            }
+
+            if (cardElement) {
+                cardElement.classList.remove('is-new');
+                const badge = cardElement.querySelector('.new-badge');
+                if (badge) {
+                    badge.style.transition = 'opacity 0.3s ease';
+                    badge.style.opacity = '0';
+                    setTimeout(() => badge.remove(), 300);
+                }
+            }
+
+            const newCount = allCategoryFiles.filter((f) =>
+                window.OlympApp.state.newFiles.some((nf) => nf.id === f.id)
+            ).length;
+            if (DOM.catStatNew) DOM.catStatNew.textContent = newCount;
+
+            animatePageProgress(100);
+            showPageDownloadComplete();
+        }
+
+        /* ===================== DOWNLOAD TOAST ===================== */
+        function showPageDownloadToast(title) {
+            if (!DOM.downloadToast) return;
+            DOM.downloadToastTitle.textContent = title;
+            DOM.downloadProgress.style.width = '0%';
+            DOM.downloadToastCheck.classList.add('hidden');
+            DOM.downloadToast.querySelector('.download-toast-icon i').className = 'fas fa-circle-notch fa-spin';
+            DOM.downloadToast.classList.remove('hidden');
+        }
+
+        function animatePageProgress(percent) {
+            if (!DOM.downloadProgress) return;
+            DOM.downloadProgress.style.width = percent + '%';
+        }
+
+        function simulatePageProgress() {
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += Math.random() * 25 + 10;
+                if (progress >= 90) {
+                    progress = 90;
+                    clearInterval(interval);
+                }
+                animatePageProgress(Math.round(progress));
+            }, 150);
+        }
+
+        function showPageDownloadComplete() {
+            if (!DOM.downloadToast) return;
+            setTimeout(() => {
+                DOM.downloadToast.querySelector('.download-toast-icon i').className = 'fas fa-check-circle';
+                DOM.downloadToast.querySelector('.download-toast-icon').style.color = 'var(--accent-green)';
+                DOM.downloadToastTitle.textContent = 'Téléchargement terminé !';
+                DOM.downloadToastCheck.classList.remove('hidden');
+                setTimeout(() => {
+                    DOM.downloadToast.classList.add('hidden');
+                    const icon = DOM.downloadToast.querySelector('.download-toast-icon');
+                    if (icon) icon.style.color = '';
+                }, 2500);
+            }, 400);
+        }
+
+        /* ===================== ERROR ===================== */
+        function showError() {
+            if (DOM.loadingSkeleton) DOM.loadingSkeleton.remove();
+            DOM.documentsContainer.innerHTML = `
+                <div class="empty-state">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <p>Impossible de charger les documents.<br>Vérifiez votre connexion internet.</p>
+                    <button class="btn btn-primary btn-sm" onclick="location.reload()" style="margin-top: 16px;">
+                        <i class="fas fa-redo"></i> Réessayer
+                    </button>
+                </div>
+            `;
+        }
+
+        /* ===================== SCROLL TO TOP ===================== */
+        function initScrollToTop() {
+            window.addEventListener('scroll', () => {
+                if (!DOM.scrollTopBtn) return;
+                if (window.scrollY > 400) {
+                    DOM.scrollTopBtn.classList.add('visible');
+                } else {
+                    DOM.scrollTopBtn.classList.remove('visible');
+                }
+                if (DOM.pageHeader) {
+                    if (window.scrollY > 10) {
+                        DOM.pageHeader.classList.add('scrolled');
+                    } else {
+                        DOM.pageHeader.classList.remove('scrolled');
+                    }
+                }
+            }, { passive: true });
+
+            if (DOM.scrollTopBtn) {
+                DOM.scrollTopBtn.addEventListener('click', () => {
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                });
+            }
+        }
+
+        /* ===================== EVENT BINDINGS ===================== */
+        function bindEvents() {
+            // Search
+            if (DOM.searchInput) {
+                let debounce;
+                DOM.searchInput.addEventListener('input', () => {
+                    clearTimeout(debounce);
+                    const val = DOM.searchInput.value.trim();
+                    if (val.length > 0) {
+                        DOM.searchClear.classList.remove('hidden');
+                    } else {
+                        DOM.searchClear.classList.add('hidden');
+                    }
+                    debounce = setTimeout(() => sortAndRender(), 200);
+                });
+            }
+
+            if (DOM.searchClear) {
+                DOM.searchClear.addEventListener('click', () => {
+                    DOM.searchInput.value = '';
+                    DOM.searchClear.classList.add('hidden');
+                    sortAndRender();
+                    DOM.searchInput.focus();
+                });
+            }
+
+            // Sort
+            if (DOM.sortSelect) {
+                DOM.sortSelect.addEventListener('change', () => {
+                    currentSort = DOM.sortSelect.value;
+                    sortAndRender();
+                });
+            }
+
+            // Type filter chips
+            DOM.typeChips.forEach((chip) => {
+                chip.addEventListener('click', () => {
+                    DOM.typeChips.forEach((c) => c.classList.remove('active'));
+                    chip.classList.add('active');
+                    currentDocFilter = chip.getAttribute('data-filter');
+                    sortAndRender();
+                });
+            });
+
+            // Quick link cards (act as filter shortcuts)
+            DOM.quickLinks.forEach((card) => {
+                card.addEventListener('click', () => {
+                    const filterVal = card.getAttribute('data-quick-filter');
+                    if (!filterVal) return;
+
+                    // Set filter
+                    currentDocFilter = filterVal;
+
+                    // Update chip active state
+                    DOM.typeChips.forEach((c) => {
+                        c.classList.remove('active');
+                        if (c.getAttribute('data-filter') === filterVal) {
+                            c.classList.add('active');
+                        }
+                    });
+
+                    sortAndRender();
+
+                    // Scroll to results
+                    setTimeout(() => {
+                        const container = document.getElementById('documents-container');
+                        if (container) {
+                            container.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        }
+                    }, 100);
+                });
+            });
+
+            // Keyboard
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && DOM.searchInput) {
+                    DOM.searchInput.value = '';
+                    DOM.searchClear.classList.add('hidden');
+                    DOM.searchInput.blur();
+                    sortAndRender();
+                }
+            });
+        }
+
+        /* ===================== INIT ===================== */
+        function init() {
+            initTheme();
+            bindEvents();
+            initScrollToTop();
+            loadData();
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', init);
+        } else {
+            init();
+        }
+    })();
+    </script>
+
+</body>
+</html>

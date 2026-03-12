@@ -1,0 +1,223 @@
+{
+    "resumes": [
+        {
+            "title": "Résumé — Lois de Newton",
+            "file": "files/resumes/resume_lois_newton.pdf",
+            "date": "2025-01-15"
+        },
+        {
+            "title": "Résumé — Oscillations libres",
+            "file": "files/resumes/resume_oscillations_libres.pdf",
+            "date": "2025-01-22"
+        },
+        {
+            "title": "Résumé — Ondes mécaniques progressives",
+            "file": "files/resumes/resume_ondes_mecaniques.pdf",
+            "date": "2025-02-03"
+        },
+        {
+            "title": "Résumé — Transformations nucléaires",
+            "file": "files/resumes/resume_transformations_nucleaires.pdf",
+            "date": "2025-02-14"
+        },
+        {
+            "title": "Résumé — Électricité : Dipôle RC",
+            "file": "files/resumes/resume_dipole_rc.pdf",
+            "date": "2025-02-28"
+        },
+        {
+            "title": "Résumé — Électricité : Dipôle RL",
+            "file": "files/resumes/resume_dipole_rl.pdf",
+            "date": "2025-03-05"
+        },
+        {
+            "title": "Résumé — Oscillations forcées et résonance",
+            "file": "files/resumes/resume_oscillations_forcees.pdf",
+            "date": "2025-03-12"
+        },
+        {
+            "title": "Résumé — Cinétique chimique",
+            "file": "files/resumes/resume_cinetique_chimique.pdf",
+            "date": "2025-03-20"
+        },
+        {
+            "title": "Résumé — Acides et bases",
+            "file": "files/resumes/resume_acides_bases.pdf",
+            "date": "2025-04-02"
+        },
+        {
+            "title": "Résumé — Ondes lumineuses : diffraction et interférences",
+            "file": "files/resumes/resume_ondes_lumineuses.pdf",
+            "date": "2025-04-10"
+        }
+    ],
+
+    "exercices": [
+        {
+            "title": "Exercices — Lois de Newton (Série 1)",
+            "file": "files/exercices/exo_newton_serie1.pdf",
+            "date": "2025-01-18"
+        },
+        {
+            "title": "Exercices — Lois de Newton (Série 2)",
+            "file": "files/exercices/exo_newton_serie2.pdf",
+            "date": "2025-01-25"
+        },
+        {
+            "title": "Exercices — Oscillations libres",
+            "file": "files/exercices/exo_oscillations_libres.pdf",
+            "date": "2025-02-06"
+        },
+        {
+            "title": "Exercices — Ondes mécaniques",
+            "file": "files/exercices/exo_ondes_mecaniques.pdf",
+            "date": "2025-02-16"
+        },
+        {
+            "title": "Exercices — Décroissance radioactive",
+            "file": "files/exercices/exo_decroissance_radioactive.pdf",
+            "date": "2025-02-20"
+        },
+        {
+            "title": "Exercices — Dipôle RC",
+            "file": "files/exercices/exo_dipole_rc.pdf",
+            "date": "2025-03-01"
+        },
+        {
+            "title": "Exercices — Dipôle RL",
+            "file": "files/exercices/exo_dipole_rl.pdf",
+            "date": "2025-03-08"
+        },
+        {
+            "title": "Exercices — Circuit RLC",
+            "file": "files/exercices/exo_circuit_rlc.pdf",
+            "date": "2025-03-15"
+        },
+        {
+            "title": "Exercices — Cinétique chimique",
+            "file": "files/exercices/exo_cinetique_chimique.pdf",
+            "date": "2025-03-22"
+        },
+        {
+            "title": "Exercices — Acides et bases (Série 1)",
+            "file": "files/exercices/exo_acides_bases_serie1.pdf",
+            "date": "2025-04-05"
+        },
+        {
+            "title": "Exercices — Acides et bases (Série 2)",
+            "file": "files/exercices/exo_acides_bases_serie2.pdf",
+            "date": "2025-04-12"
+        },
+        {
+            "title": "Exercices — Ondes lumineuses",
+            "file": "files/exercices/exo_ondes_lumineuses.pdf",
+            "date": "2025-04-18"
+        }
+    ],
+
+    "tests": [
+        {
+            "title": "Contrôle N°1 — Mécanique newtonienne",
+            "file": "files/tests/controle1_mecanique.pdf",
+            "date": "2025-01-28"
+        },
+        {
+            "title": "Contrôle N°2 — Oscillations et ondes",
+            "file": "files/tests/controle2_oscillations_ondes.pdf",
+            "date": "2025-02-22"
+        },
+        {
+            "title": "Contrôle N°3 — Électricité (RC et RL)",
+            "file": "files/tests/controle3_electricite.pdf",
+            "date": "2025-03-18"
+        },
+        {
+            "title": "Devoir surveillé — Physique nucléaire",
+            "file": "files/tests/ds_physique_nucleaire.pdf",
+            "date": "2025-03-02"
+        },
+        {
+            "title": "Examen blanc — Semestre 1",
+            "file": "files/tests/examen_blanc_s1.pdf",
+            "date": "2025-02-10"
+        },
+        {
+            "title": "Examen blanc — Semestre 2",
+            "file": "files/tests/examen_blanc_s2.pdf",
+            "date": "2025-04-20"
+        },
+        {
+            "title": "Olympiade locale — Épreuve physique 2024",
+            "file": "files/tests/olympiade_locale_physique_2024.pdf",
+            "date": "2025-01-10"
+        },
+        {
+            "title": "Olympiade régionale — Épreuve physique 2024",
+            "file": "files/tests/olympiade_regionale_physique_2024.pdf",
+            "date": "2025-02-08"
+        },
+        {
+            "title": "Olympiade nationale — Épreuve physique 2023",
+            "file": "files/tests/olympiade_nationale_physique_2023.pdf",
+            "date": "2025-01-05"
+        },
+        {
+            "title": "QCM — Révision générale physique",
+            "file": "files/tests/qcm_revision_physique.pdf",
+            "date": "2025-04-15"
+        }
+    ],
+
+    "documents": [
+        {
+            "title": "Tableau périodique des éléments",
+            "file": "files/documents/tableau_periodique.pdf",
+            "date": "2025-01-02"
+        },
+        {
+            "title": "Formulaire de physique — 2ème Bac",
+            "file": "files/documents/formulaire_physique_2bac.pdf",
+            "date": "2025-01-08"
+        },
+        {
+            "title": "Formulaire de mathématiques — 2ème Bac",
+            "file": "files/documents/formulaire_maths_2bac.pdf",
+            "date": "2025-01-08"
+        },
+        {
+            "title": "Méthodes de résolution — Équations différentielles",
+            "file": "files/documents/methodes_eq_differentielles.pdf",
+            "date": "2025-02-12"
+        },
+        {
+            "title": "Guide de préparation — Olympiades de physique",
+            "file": "files/documents/guide_preparation_olympiades.pdf",
+            "date": "2025-01-20"
+        },
+        {
+            "title": "Constantes physiques fondamentales",
+            "file": "files/documents/constantes_physiques.pdf",
+            "date": "2025-01-03"
+        },
+        {
+            "title": "Planning de révision — Semestre 2",
+            "file": "files/documents/planning_revision_s2.pdf",
+            "date": "2025-03-01"
+        },
+        {
+            "title": "Conseils méthodologiques — Résolution de problèmes",
+            "file": "files/documents/conseils_methodologiques.pdf",
+            "date": "2025-02-05"
+        },
+        {
+            "title": "Corrigé type — Examen national 2024",
+            "file": "files/documents/corrige_examen_national_2024.pdf",
+            "date": "2025-04-08"
+        },
+        {
+            "title": "Liste des manipulations TP — Physique",
+            "file": "files/documents/liste_tp_physique.pdf",
+            "date": "2025-03-25"
+        }
+    ]
+}
