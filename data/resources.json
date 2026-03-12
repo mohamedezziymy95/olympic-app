@@ -54,13 +54,13 @@
 
     "exercices": [
         {
-            "title": "Exercices — Lois de Newton (Série 1)",
-            "file": "files/exercices/exo_newton_serie1.pdf",
+            "title": "Exercices Niveau1 Physique",
+            "file": "files/exercices/Exercices Niveau1 Chimie.pdf",
             "date": "2025-01-18"
         },
         {
-            "title": "Exercices — Lois de Newton (Série 2)",
-            "file": "files/exercices/exo_newton_serie2.pdf",
+            "title": "Exercices Niveau1 Chimie",
+            "file": "files/exercices/Exercices Niveau1 Physique.pdf",
             "date": "2025-01-25"
         },
         {
@@ -220,4 +220,5 @@
             "date": "2025-03-25"
         }
     ]
+
 }
