@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#10243a">
+  <meta name="description" content="منصة نادي الأولمبياد والمسابقات: دروس، تمارين، وثائق ومتابعة التقدم.">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self' https://raw.githubusercontent.com; object-src 'self'; base-uri 'self'">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="الأولمبياد">
+  <title>نادي الأولمبياد والمسابقات</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="assets/club-icon-192.png" type="image/png">
+  <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" aria-label="القائمة الرئيسية">
+      <a class="brand" href="#home" aria-label="الصفحة الرئيسية">
+        <img src="assets/club-logo.png" alt="شعار نادي الأولمبياد والمسابقات">
+      </a>
+      <div class="sidebar-caption">مساحة التعلّم</div>
+      <nav class="side-nav" id="side-nav">
+        <button data-route="home" class="nav-link is-active"><span class="nav-icon">⌂</span><span>الرئيسية</span></button>
+        <button data-route="lessons" class="nav-link"><span class="nav-icon">▤</span><span>مسارات التعلّم</span></button>
+        <button data-route="exercises" class="nav-link"><span class="nav-icon">✎</span><span>التمارين</span><span class="nav-count" id="exercise-count">0</span></button>
+        <button data-route="library" class="nav-link"><span class="nav-icon">▣</span><span>مكتبة الوثائق</span></button>
+        <button data-route="progress" class="nav-link"><span class="nav-icon">◔</span><span>تقدمي</span></button>
+        <button data-route="updates" class="nav-link"><span class="nav-icon">↻</span><span>آخر المستجدات</span></button>
+      </nav>
+      <div class="sidebar-bottom">
+        <div class="sync-card"><span class="sync-dot" id="sync-dot"></span><div><strong id="sync-title">محتوى محفوظ</strong><small id="sync-text">تقدر تتعلم بلا إنترنت</small></div></div>
+        <button class="nav-link settings-link" data-route="settings"><span class="nav-icon">⚙</span><span>الإعدادات</span></button>
+        <div class="sidebar-foot">ثانوية الوفاق التأهيلية<br>سيدي الزوين</div>
+      </div>
+    </aside>
+
+    <main class="main-area">
+      <header class="topbar">
+        <div class="mobile-brand"><img src="assets/club-icon-192.png" alt=""><span>الأولمبياد والمسابقات</span></div>
+        <div class="topbar-title"><span class="eyebrow">منصتك للتدرّب والتفوّق</span><strong id="page-title">الرئيسية</strong></div>
+        <div class="topbar-actions">
+        <button class="icon-button" id="settings-button" aria-label="الإعدادات" title="الإعدادات">⚙</button><button class="icon-button" id="pwa-install" aria-label="تثبيت التطبيق" title="تثبيت التطبيق">⇧</button><button class="icon-button" id="refresh-button" aria-label="تحديث المحتوى" title="تحديث المحتوى">↻</button>
+          <button class="profile-chip" id="profile-button"><span class="avatar" id="profile-avatar">ط</span><span id="profile-name">ملفي</span><span class="chevron">⌄</span></button>
+        </div>
+      </header>
+      <section id="view" class="view" aria-live="polite"></section>
+      <footer class="desktop-footer"><span>نادي الأولمبياد والمسابقات</span><span>تعلّم اليوم، نافس غداً</span></footer>
+    </main>
+  </div>
+
+  <nav class="mobile-nav" id="mobile-nav" aria-label="تنقل سريع">
+    <button data-route="home" class="is-active"><span>⌂</span><small>الرئيسية</small></button>
+    <button data-route="lessons"><span>▤</span><small>الدروس</small></button>
+    <button data-route="exercises"><span>✎</span><small>التمارين</small></button>
+    <button data-route="library"><span>▣</span><small>الوثائق</small></button>
+    <button data-route="progress"><span>◔</span><small>تقدمي</small></button>
+    <button data-route="updates"><span>↻</span><small>المستجدات</small></button>
+  </nav>
+
+  <dialog id="profile-dialog" class="profile-dialog">
+    <form method="dialog" class="dialog-head"><div><span class="eyebrow">تخصيص تجربتك</span><h2>الملف الشخصي</h2></div><button class="icon-button" aria-label="إغلاق">×</button></form>
+    <form id="profile-form" class="dialog-body">
+      <label>الاسم الكامل<input name="name" maxlength="70" autocomplete="name" placeholder="مثال: سلمى العلوي"></label>
+      <label>المستوى الدراسي<select name="level"><option value="الجذع المشترك العلمي">الجذع المشترك العلمي</option><option value="الأولى باكالوريا علوم تجريبية">الأولى باكالوريا علوم تجريبية</option><option value="الأولى باكالوريا علوم رياضية">الأولى باكالوريا علوم رياضية</option><option value="الثانية باكالوريا علوم فيزيائية">الثانية باكالوريا علوم فيزيائية</option><option value="الثانية باكالوريا علوم رياضية">الثانية باكالوريا علوم رياضية</option><option value="مستوى آخر">مستوى آخر</option></select></label>
+      <label>هدفك الأسبوعي <span class="inline-input"><input name="goal" type="number" min="1" max="30" value="5"><span>تمارين</span></span></label>
+      <div class="dialog-actions"><button type="button" class="button button-quiet" id="cancel-profile">إلغاء</button><button class="button button-primary" type="submit">حفظ التغييرات</button></div>
+    </form>
+  </dialog>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script src="app.js" defer></script>
+</body>
+</html>

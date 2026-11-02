@@ -1,6 +1,6 @@
-const CACHE_NAME = 'olympiad-club-v1';
+const CACHE_NAME = 'olympiad-club-v2';
 const SHELL = [
-  './', './index.html', './styles.css', './app.js', './manifest.webmanifest', './assets/club-logo.png', './assets/club-mark.svg', './data/content.json',
+  './', './index.html', './styles.css', './app.js', './manifest.webmanifest', './assets/club-logo.png', './assets/club-mark.svg', './assets/club-icon-192.png', './assets/club-icon-512.png', './assets/apple-touch-icon.png', './data/content.json',
   './files/club-library/optics.pdf', './files/club-library/SIunits.pdf', './files/club-library/DCelectricity.pdf',
   './files/club-library/electrostatics.pdf', './files/club-library/equilibre-static.pdf', './files/club-library/gravitation.pdf',
   './files/club-library/mesures.pdf'

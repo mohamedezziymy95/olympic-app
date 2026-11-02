@@ -1,0 +1,58 @@
+{
+  "id": "./",
+  "name": "نادي الأولمبياد والمسابقات",
+  "short_name": "الأولمبياد",
+  "description": "منصة التعلّم والتدريب لنادي الأولمبياد والمسابقات بثانوية الوفاق التأهيلية.",
+  "lang": "ar-MA",
+  "dir": "rtl",
+  "start_url": "./index.html#home",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "theme_color": "#10243a",
+  "background_color": "#f4f7fa",
+  "categories": [
+    "education",
+    "productivity"
+  ],
+  "icons": [
+    {
+      "src": "assets/club-icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/club-icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "التمارين",
+      "short_name": "تمارين",
+      "url": "./index.html#exercises",
+      "icons": [
+        {
+          "src": "assets/club-icon-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "مكتبة الوثائق",
+      "short_name": "الوثائق",
+      "url": "./index.html#library",
+      "icons": [
+        {
+          "src": "assets/club-icon-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    }
+  ]
+}

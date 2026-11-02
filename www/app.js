@@ -7,7 +7,7 @@
     rawBase: 'https://raw.githubusercontent.com/mohamedezziymy95/olympic-app/main/',
     contentUrl: 'https://raw.githubusercontent.com/mohamedezziymy95/olympic-app/main/data/content.json',
     updatesUrl: 'https://raw.githubusercontent.com/mohamedezziymy95/olympic-app/main/data/updates.json',
-    cacheKey: 'olympiad.content.v2',
+    cacheKey: 'olympiad.content.v3',
     profileKey: 'olympiad.profile.v1',
     progressKey: 'olympiad.progress.v1',
     recentKey: 'olympiad.recent.v1',
@@ -25,7 +25,17 @@
     const localResources = Array.isArray(bundled?.resources) ? bundled.resources : [];
     const remoteResources = Array.isArray(content?.resources) ? content.resources : [];
     const localIds = new Set(localResources.map(x => String(x.id)));
-    return { ...content, resources: [...localResources, ...remoteResources.filter(x => !localIds.has(String(x.id)))] };
+    const compareVersion = (left, right) => {
+      const a = String(left || '0').split('.').map(Number), b = String(right || '0').split('.').map(Number);
+      for (let i=0; i<Math.max(a.length,b.length); i++) { const delta=(a[i]||0)-(b[i]||0); if(delta) return delta; }
+      return 0;
+    };
+    const useBundledExercises = compareVersion(content?.version, bundled?.version) < 0;
+    const localExercises = Array.isArray(bundled?.exercises) ? bundled.exercises : [];
+    const remoteExercises = Array.isArray(content?.exercises) ? content.exercises : [];
+    const localExerciseIds = new Set(localExercises.map(x => String(x.id)));
+    const exercises = useBundledExercises ? [...localExercises, ...remoteExercises.filter(x => !localExerciseIds.has(String(x.id)))] : remoteExercises;
+    return { ...content, exercises, resources: [...localResources, ...remoteResources.filter(x => !localIds.has(String(x.id)))] };
   }
   let toastTimer;
 
@@ -39,6 +49,16 @@
   }
   function esc(value) {
     return String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  }
+  function formatFormula(value) {
+    let source = esc(value);
+    source = source.replace(/\\[,;!]/g, '\u2009');
+    source = source.replace(/\\operatorname\{([^{}]+)\}/g, '$1').replace(/\\pmod\{([^{}]+)\}/g, '(mod $1)').replace(/\\text\{([^{}]+)\}/g, '$1');
+    source = source.replace(/\\frac\{([^{}]+)\}\{([^{}]+)\}/g, '<span class="math-frac"><span>$1</span><span>$2</span></span>');
+    source = source.replace(/\\sqrt\{([^{}]+)\}/g, '<span class="math-sqrt">√<span>$1</span></span>');
+    source = source.replace(/\\(times|cdot|div|pm|neq|equiv|le|ge|approx|infty|pi|theta|alpha|beta|Delta|sum|rightarrow)/g, (_, key) => ({times:'×',cdot:'·',div:'÷',pm:'±',neq:'≠',equiv:'≡',le:'≤',ge:'≥',approx:'≈',infty:'∞',pi:'π',theta:'θ',alpha:'α',beta:'β',Delta:'Δ',sum:'∑',rightarrow:'→'}[key]));
+    source = source.replace(/\\(?:left|right)/g, '').replace(/\^\{([^{}]+)\}/g, '<sup>$1</sup>').replace(/_\{([^{}]+)\}/g, '<sub>$1</sub>').replace(/\^([A-Za-z0-9]+)/g, '<sup>$1</sup>').replace(/_([A-Za-z0-9]+)/g, '<sub>$1</sub>').replace(/[{}]/g, '');
+    return `<span class="math-expression" dir="ltr">${source}</span>`;
   }
   function safeContent(data) {
     return data && typeof data === 'object' && Array.isArray(data.lessons) && Array.isArray(data.exercises) && Array.isArray(data.resources) && data.lessons.every(x => x && x.id && x.title) && data.exercises.every(x => x && x.id && x.title) && data.resources.every(x => x && x.id && x.title && x.file);
@@ -184,9 +204,9 @@
   }
   function exerciseCard(x) {
     const done = state.progress.completed.includes(String(x.id));
-    return `<button class="content-card exercise-card" data-open-exercise="${esc(x.id)}"><span class="exercise-top"><span class="difficulty ${difficultyClass(x.difficulty)}">${esc(x.difficulty || 'تدريب')}</span><span class="points">${Number(x.points || 0)} نقطة</span></span><span class="card-category">${esc(x.topic || 'مسألة')}</span><h3>${esc(x.title)}</h3><p>${esc(x.description || '')}</p><span class="card-meta">${esc(x.level || 'جميع المستويات')} <b>${done ? '✓ منجز' : 'حلّ التمرين ↗'}</b></span></button>`;
+    return `<button class="content-card exercise-card" dir="auto" data-open-exercise="${esc(x.id)}"><span class="exercise-top"><span class="difficulty ${difficultyClass(x.difficulty)}">${esc(x.difficulty || 'Exercice')}</span><span class="points">${Number(x.points || 0)} pts</span></span><span class="card-category">${esc(x.topic || 'Problème')}</span><h3>${esc(x.title)}</h3><p>${esc(x.description || '')}</p><span class="card-meta">${esc(x.level || 'Tous les niveaux')} <b>${done ? '✓ Réussi' : 'Résoudre ↗'}</b></span></button>`;
   }
-  function difficultyClass(value) { return value === 'سهل' ? 'easy' : value === 'صعب' ? 'hard' : 'medium'; }
+  function difficultyClass(value) { return value === 'سهل' || value === 'Facile' ? 'easy' : value === 'صعب' || value === 'Difficile' ? 'hard' : 'medium'; }
   function renderLessons() {
     const list = state.content.lessons.filter(x => matchQuery(`${x.title} ${x.description} ${x.category} ${x.level}`));
     return `<div class="page-intro"><div><span class="eyebrow">تعلّم بالفكرة والبرهان</span><h1>مسارات التعلّم</h1><p>مفاهيم مركّزة وتمارين تساعدك تبني أدوات التفكير الأولمبيادي.</p></div><div class="intro-mark">∑</div></div><form class="searchbar" data-search-form><span>⌕</span><input id="search-input" value="${esc(state.query)}" placeholder="قلب على درس أو محور…"><button class="button button-primary">بحث</button></form><section class="card-grid lesson-grid">${list.map(lessonCard).join('') || emptyState('ما لقيناش مسار بهاد الكلمات.')}</section>`;
@@ -201,7 +221,7 @@
   }
   function renderExercises() {
     const list = state.content.exercises.filter(x => (state.filter === 'all' || x.difficulty === state.filter) && matchQuery(`${x.title} ${x.description} ${x.topic} ${x.level}`));
-    return `<div class="page-intro"><div><span class="eyebrow">درّب عقلك كل يوم</span><h1>التمارين</h1><p>اختار تمريناً، خذ وقتك فالتفكير، وسجّل إنجازك.</p></div><div class="intro-mark">✎</div></div><form class="searchbar" data-search-form><span>⌕</span><input id="search-input" value="${esc(state.query)}" placeholder="قلب على تمرين أو محور…"><button class="button button-primary">بحث</button></form><div class="filter-row" role="group" aria-label="تصفية حسب الصعوبة"><button data-filter="all" class="filter-chip ${state.filter === 'all' ? 'active' : ''}">الكل <small>${state.content.exercises.length}</small></button><button data-filter="سهل" class="filter-chip ${state.filter === 'سهل' ? 'active' : ''}">سهل</button><button data-filter="متوسط" class="filter-chip ${state.filter === 'متوسط' ? 'active' : ''}">متوسط</button><button data-filter="صعب" class="filter-chip ${state.filter === 'صعب' ? 'active' : ''}">صعب</button></div><section class="card-grid exercise-grid">${list.map(exerciseCard).join('') || emptyState('ما لقيناش تمارين بهاد الاختيار.')}</section>`;
+    return `<div class="page-intro"><div><span class="eyebrow">Entraîne-toi régulièrement</span><h1>Exercices</h1><p>Choisis un problème, prends le temps de raisonner, puis vérifie ta réponse.</p></div><div class="intro-mark">✎</div></div><form class="searchbar" data-search-form><span>⌕</span><input id="search-input" value="${esc(state.query)}" placeholder="Rechercher un exercice ou un thème…"><button class="button button-primary">Rechercher</button></form><div class="filter-row" role="group" aria-label="Filtrer par difficulté"><button data-filter="all" class="filter-chip ${state.filter === 'all' ? 'active' : ''}">Tous <small>${state.content.exercises.length}</small></button><button data-filter="Facile" class="filter-chip ${state.filter === 'Facile' ? 'active' : ''}">Facile</button><button data-filter="Moyen" class="filter-chip ${state.filter === 'Moyen' ? 'active' : ''}">Moyen</button><button data-filter="Difficile" class="filter-chip ${state.filter === 'Difficile' ? 'active' : ''}">Difficile</button></div><section class="card-grid exercise-grid">${list.map(exerciseCard).join('') || emptyState('Aucun exercice ne correspond à cette recherche.')}</section>`;
   }
   function renderExercise(id) {
     const item = state.content.exercises.find(x => String(x.id) === id);
@@ -214,10 +234,10 @@
     const nativeAndroid = navigator.userAgent.includes('OlympiadClubAndroid');
     const target = nativeAndroid || window.Capacitor?.isNativePlatform?.() ? '_self' : '_blank';
     const feedback = result ? (result.score >= Number(item.points || 0)
-      ? `<div class="answer-feedback is-visible"><strong class="correct">جواب كامل! ${result.scoreGain ? `+${result.scoreGain} نقطة` : 'نقط التمرين مسجلة من قبل'}</strong><p>${esc(item.explanation || 'راجع الحل ثم انتقل إلى التمرين التالي.')}</p></div>`
-      : `<div class="answer-feedback is-visible"><strong class="${result.score > 0 ? 'correct' : 'incorrect'}">${result.score > 0 ? `تنقيط جزئي: ${result.score} من ${Number(item.points || 0)} نقطة.` : 'الجواب غير صحيح؛ المحاولة جزء من التعلّم.'} ${result.scoreGain ? `زادت ${result.scoreGain} نقطة لرصيدك.` : ''}</strong>${item.hint ? `<p><b>تلميح:</b> ${esc(item.hint)}</p>` : ''}${item.remediation ? `<p><b>راجع:</b> ${esc(item.remediation)}</p>` : ''}<p><b>الفكرة والحل:</b> ${esc(item.explanation || 'أعد قراءة المعطيات وجرب طريقة مختلفة.')}</p><button class="button button-quiet" data-try-again>جرّب من جديد</button></div>`)
+      ? `<div class="answer-feedback is-visible"><strong class="correct">Réponse complète ! ${result.scoreGain ? `+${result.scoreGain} point(s)` : 'Score déjà enregistré.'}</strong><p>${esc(item.explanation || 'Relis la solution, puis passe à un autre exercice.')}</p></div>`
+      : `<div class="answer-feedback is-visible"><strong class="${result.score > 0 ? 'correct' : 'incorrect'}">${result.score > 0 ? `Score partiel : ${result.score}/${Number(item.points || 0)}.` : 'Réponse incorrecte. Une erreur est une étape de l’apprentissage.'} ${result.scoreGain ? `+${result.scoreGain} point(s) au total.` : ''}</strong>${item.hint ? `<p><b>Indice :</b> ${esc(item.hint)}</p>` : ''}${item.remediation ? `<p><b>À revoir :</b> ${esc(item.remediation)}</p>` : ''}<p><b>Explication :</b> ${esc(item.explanation || 'Relis les données et essaie une autre méthode.')}</p><button class="button button-quiet" data-try-again>Réessayer</button></div>`)
       : '';
-    return `<button class="back-link" data-route="exercises">→ رجوع للتمارين</button><article class="detail-panel exercise-detail"><div class="exercise-top"><span class="difficulty ${difficultyClass(item.difficulty)}">${esc(item.difficulty || 'تدريب')}</span><span class="points">${Number(item.points || 0)} نقطة</span></div><div class="detail-kicker">${esc(item.topic || 'مسألة أولمبيادية')} · ${esc(item.level || 'جميع المستويات')}</div><h1>${esc(item.title)}</h1><p class="detail-lead">${esc(item.description || '')}</p><div class="problem-box"><span class="problem-label">المسألة</span><p>${esc(item.prompt || item.question || 'افتح ملف التمرين المرفق وجرّب الحل.')}</p></div>${choices.length ? `<div class="choice-list">${choices.map((choice, i) => `<button class="choice ${selected === i ? 'selected' : ''}" data-choice="${i}"><span class="choice-letter">${String.fromCharCode(65+i)}</span>${esc(choice)}</button>`).join('')}</div>${item.hint ? `<button class="button button-quiet" data-show-hint>${state.hintShown ? 'إخفاء التلميح' : 'أعطني تلميحاً'}</button>${state.hintShown ? `<div class="tip-box"><strong>تلميح</strong><span>${esc(item.hint)}</span></div>` : ''}` : ''}${result ? '' : `<button class="button button-primary check-answer" data-check-answer="${esc(id)}">تحقّق من الإجابة</button>`}${feedback}` : `<a class="button button-primary" href="${esc(resourceUrl(item.file))}" target="${target}" rel="noopener">فتح ملف التمرين ↗</a>`}${done ? '<div class="completed-banner">✓ هذا التمرين مسجل ضمن إنجازاتك.</div>' : ''}</article>`;
+    return `<button class="back-link" data-route="exercises">→ Retour aux exercices</button><article class="detail-panel exercise-detail" dir="ltr"><div class="exercise-top"><span class="difficulty ${difficultyClass(item.difficulty)}">${esc(item.difficulty || 'Exercice')}</span><span class="points">${Number(item.points || 0)} points</span></div><div class="detail-kicker">${esc(item.topic || 'Problème olympique')} · ${esc(item.level || 'Tous les niveaux')}</div><h1>${esc(item.title)}</h1><p class="detail-lead">${esc(item.description || '')}</p><div class="problem-box"><span class="problem-label">Énoncé</span><p>${esc(item.prompt || item.question || 'Ouvre le document joint et cherche une solution.')}</p></div>${item.formula ? `<div class="problem-formula">${formatFormula(item.formula)}</div>` : ''}${choices.length ? `<div class="choice-list">${choices.map((choice, i) => `<button class="choice ${selected === i ? 'selected' : ''}" data-choice="${i}"><span class="choice-letter">${String.fromCharCode(65+i)}</span>${esc(choice)}</button>`).join('')}</div>${item.hint ? `<button class="button button-quiet" data-show-hint>${state.hintShown ? 'Masquer l’indice' : 'Afficher un indice'}</button>${state.hintShown ? `<div class="tip-box"><strong>Indice</strong><span>${esc(item.hint)}</span></div>` : ''}` : ''}${result ? '' : `<button class="button button-primary check-answer" data-check-answer="${esc(id)}">Vérifier la réponse</button>`}${feedback}` : `<a class="button button-primary" href="${esc(resourceUrl(item.file))}" target="${target}" rel="noopener">Ouvrir le fichier ↗</a>`}${done ? '<div class="completed-banner">✓ Exercice réussi.</div>' : ''}</article>`;
   }
   function renderLibrary() {
     const list = state.content.resources.filter(x => matchQuery(`${x.title} ${x.description} ${x.type} ${x.subject} ${x.level}`));
@@ -279,7 +299,7 @@
     if (e.target.closest('[data-try-again]')) { state.quizChoice = null; state.answerResult = null; render(); return; }
     const check = e.target.closest('[data-check-answer]'); if (check) {
       const task = state.content.exercises.find(x => String(x.id) === check.dataset.checkAnswer);
-      if (state.quizChoice === null) { notify('اختار جواب قبل ما تتحقق.'); return; }
+      if (state.quizChoice === null) { notify('Choisis une réponse avant la correction.'); return; }
       if (!Array.isArray(state.progress.attempts)) state.progress.attempts = [];
       const correct = state.quizChoice === Number(task.answer);
       if (!state.progress.bestScores || typeof state.progress.bestScores !== 'object') state.progress.bestScores = {};

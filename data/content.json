@@ -1,5 +1,5 @@
 {
-  "version": "1.2.0",
+  "version": "1.3.0",
   "updatedAt": "2026-11-02",
   "lessons": [
     {
@@ -50,13 +50,13 @@
   "exercises": [
     {
       "id": "ex-01",
-      "title": "بواقي القوى",
-      "description": "اكتشف النمط الدوري قبل حساب الباقي.",
-      "topic": "نظرية الأعداد",
-      "level": "الجذع المشترك العلمي",
-      "difficulty": "سهل",
+      "title": "Puissances et restes modulo 7",
+      "description": "Repérer la période des restes des puissances de 2.",
+      "topic": "Arithmétique et congruences",
+      "level": "Tronc commun scientifique",
+      "difficulty": "Facile",
       "points": 10,
-      "prompt": "ما باقي قسمة 2^20 على 7؟",
+      "prompt": "Quel est le reste de la division de 2²⁰ par 7 ?",
       "choices": [
         "1",
         "2",
@@ -64,20 +64,21 @@
         "6"
       ],
       "answer": 2,
-      "explanation": "بواقي قوى 2 بترديد 7 تتكرر: 2، 4، 1. وبما أن 20 يعطي الباقي 2 عند القسمة على 3، فالنتيجة 4.",
+      "explanation": "Les restes des puissances de 2 modulo 7 se répètent selon le cycle 2, 4, 1. Comme 20 ≡ 2 (mod 3), on obtient 2²⁰ ≡ 4 (mod 7).",
       "featured": true,
-      "hint": "جرّب حساب بواقي أول قوى للعدد 2 عند القسمة على 7، ثم لاحظ كل شحال كيتعاود النمط.",
-      "remediation": "تدرّب على الدورية في الحساب بترديد عدد، وقسّم الأس على طول الدورة."
+      "hint": "Calcule les restes des premières puissances de 2 modulo 7, puis repère la période.",
+      "remediation": "Révise la périodicité des puissances et réduis l’exposant modulo la longueur du cycle.",
+      "formula": "2^{20} \\equiv ? \\pmod{7}"
     },
     {
       "id": "ex-02",
-      "title": "قاسم مشترك",
-      "description": "استعمل خوارزمية إقليدس بذكاء.",
-      "topic": "نظرية الأعداد",
-      "level": "الجذع المشترك العلمي",
-      "difficulty": "سهل",
+      "title": "Calcul du PGCD",
+      "description": "Utiliser l’algorithme d’Euclide avec méthode.",
+      "topic": "Arithmétique",
+      "level": "Tronc commun scientifique",
+      "difficulty": "Facile",
       "points": 10,
-      "prompt": "ما القاسم المشترك الأكبر للعددين 252 و198؟",
+      "prompt": "Quel est le PGCD de 252 et 198 ?",
       "choices": [
         "9",
         "18",
@@ -85,49 +86,52 @@
         "36"
       ],
       "answer": 1,
-      "explanation": "252 = 198 + 54، و198 = 3×54 + 36، و54 = 1×36 + 18، و36 = 2×18. إذن القاسم المشترك الأكبر هو 18.",
-      "hint": "طبّق خوارزمية إقليدس: عوّض الزوج بالعدد الأصغر وباقي القسمة.",
-      "remediation": "راجع القاسم المشترك الأكبر وخوارزمية إقليدس قبل استعمال التحليل."
+      "explanation": "252 = 198 + 54 ; 198 = 3 × 54 + 36 ; 54 = 1 × 36 + 18 ; 36 = 2 × 18. Donc PGCD(252, 198) = 18.",
+      "hint": "Applique l’algorithme d’Euclide en remplaçant chaque paire par le diviseur et le reste.",
+      "remediation": "Revois la division euclidienne et la dernière étape non nulle de l’algorithme d’Euclide.",
+      "formula": "\\operatorname{PGCD}(252,\\,198)"
     },
     {
       "id": "ex-03",
-      "title": "زاوية في مثلث",
-      "description": "اربط بين منصف الزاوية ونسب الأضلاع.",
-      "topic": "الهندسة",
-      "level": "الجذع المشترك العلمي",
-      "difficulty": "متوسط",
+      "title": "Bissectrice dans un triangle",
+      "description": "Relier les longueurs des côtés à la bissectrice d’un angle.",
+      "topic": "Géométrie plane",
+      "level": "Tronc commun scientifique",
+      "difficulty": "Moyen",
       "points": 20,
-      "prompt": "في مثلث ABC، إذا كان AD منصفاً للزاوية A وD على BC، فأي علاقة صحيحة؟",
+      "prompt": "Dans le triangle ABC, AD est la bissectrice de l’angle A et D appartient au segment [BC]. Quelle relation est vraie ?",
       "choices": [
         "BD/DC = AB/AC",
         "BD/DC = AC/AB",
         "BD + DC = AB + AC",
-        "AB = AC دائماً"
+        "AB = AC dans tous les cas"
       ],
       "answer": 0,
-      "explanation": "حسب مبرهنة منصف الزاوية: BD/DC = AB/AC. لا يعني وجود المنصف أن المثلث متساوي الساقين.",
-      "hint": "منصف الزاوية يقسم الضلع المقابل بنسبة الضلعين المحاذيين للزاوية.",
-      "remediation": "راجع مبرهنة منصف الزاوية في المثلث وكيفية كتابة النسبة بالترتيب الصحيح."
+      "explanation": "D’après le théorème de la bissectrice, BD/DC = AB/AC. La présence d’une bissectrice ne signifie pas que le triangle est isocèle.",
+      "hint": "La bissectrice partage le côté opposé dans le même rapport que les deux côtés adjacents.",
+      "remediation": "Révise le théorème de la bissectrice et garde le même ordre dans les deux rapports.",
+      "formula": "\\frac{BD}{DC}=\\frac{AB}{AC}"
     },
     {
       "id": "ex-04",
-      "title": "الأعداد الأولية",
-      "description": "حلّل الحالات بترديد 3.",
-      "topic": "نظرية الأعداد",
-      "level": "الأولى باكالوريا",
-      "difficulty": "متوسط",
+      "title": "Nombres premiers et raisonnement modulo 3",
+      "description": "Étudier les cas possibles modulo 3 et isoler le cas particulier.",
+      "topic": "Arithmétique et congruences",
+      "level": "1re année du baccalauréat",
+      "difficulty": "Moyen",
       "points": 20,
-      "prompt": "كم عدد أولي p يجعل p² + 2 عدداً أولياً؟",
+      "prompt": "Combien de nombres premiers p rendent p² + 2 premier ?",
       "choices": [
         "0",
         "1",
         "2",
-        "عدد لا نهائي"
+        "Une infinité"
       ],
       "answer": 1,
-      "explanation": "إذا كان p غير 3، فإما p ≡ 1 أو 2 بترديد 3، وفي الحالتين p² ≡ 1، وبالتالي p²+2 يقبل القسمة على 3. الحالة الوحيدة p=3 وتعطي 11 أولياً.",
-      "hint": "افحص p بترديد 3، ثم جرّب الحالة p=3 بوحدها.",
-      "remediation": "راجع البرهان بالحساب بترديد 3، وانتبه للحالة الخاصة التي تجعل الناتج أولياً."
+      "explanation": "Si p est premier et p ≠ 3, alors p² ≡ 1 (mod 3), donc p² + 2 est divisible par 3 et supérieur à 3 : il n’est pas premier. Pour p = 3, on obtient 11, qui est premier. Il existe donc une seule valeur.",
+      "hint": "Sépare le cas p = 3, puis étudie les autres nombres premiers modulo 3.",
+      "remediation": "Révise les classes de congruence modulo 3 et vérifie les cas particuliers avant de conclure.",
+      "formula": "p^2+2"
     }
   ],
   "resources": [
