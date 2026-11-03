@@ -7,7 +7,7 @@
     rawBase: 'https://raw.githubusercontent.com/mohamedezziymy95/olympic-app/main/',
     contentUrl: 'https://raw.githubusercontent.com/mohamedezziymy95/olympic-app/main/data/content.json',
     updatesUrl: 'https://raw.githubusercontent.com/mohamedezziymy95/olympic-app/main/data/updates.json',
-    cacheKey: 'olympiad.content.v3',
+    cacheKey: 'olympiad.content.v4',
     profileKey: 'olympiad.profile.v1',
     progressKey: 'olympiad.progress.v1',
     recentKey: 'olympiad.recent.v1',
@@ -19,7 +19,7 @@
   const toast = $('#toast');
   const state = { content: null, updates: null, profile: null, progress: null, recent: [], route: 'home', filter: 'all', quizChoice: null, answerResult: null, hintShown: false, query: '', installPrompt: null, sync: 'local' };
   const localFallback = {
-    version: '1.0.0', lessons: [], exercises: [], resources: [], announcements: []
+    version: '1.0.0', lessons: [], exercises: [], resources: [], announcements: [], competitions: [], projects: []
   };
   function withBundledResources(content, bundled) {
     const localResources = Array.isArray(bundled?.resources) ? bundled.resources : [];
@@ -35,7 +35,12 @@
     const remoteExercises = Array.isArray(content?.exercises) ? content.exercises : [];
     const localExerciseIds = new Set(localExercises.map(x => String(x.id)));
     const exercises = useBundledExercises ? [...localExercises, ...remoteExercises.filter(x => !localExerciseIds.has(String(x.id)))] : remoteExercises;
-    return { ...content, exercises, resources: [...localResources, ...remoteResources.filter(x => !localIds.has(String(x.id)))] };
+    const mergeList = key => {
+      const items = new Map((Array.isArray(bundled?.[key]) ? bundled[key] : []).map(x => [String(x.id), x]));
+      (Array.isArray(content?.[key]) ? content[key] : []).forEach(x => items.set(String(x.id), x));
+      return [...items.values()];
+    };
+    return { ...content, exercises, resources: [...localResources, ...remoteResources.filter(x => !localIds.has(String(x.id)))], competitions: mergeList('competitions'), projects: mergeList('projects'), researchChecked: content?.researchChecked || bundled?.researchChecked };
   }
   let toastTimer;
 
@@ -143,7 +148,9 @@
       : new URL(relative, location.href).href;
   }
   function setRoute(route) {
+    const previousRoute = state.route;
     state.route = route || 'home'; state.quizChoice = null; state.answerResult = null; state.hintShown = false;
+    if (state.route === 'opportunities' && previousRoute !== 'project:') state.query = '';
     location.hash = state.route === 'home' ? 'home' : state.route;
     render(); window.scrollTo({ top: 0, behavior: 'smooth' });
   }
@@ -153,9 +160,10 @@
   }
   function navMarkup() { return ''; }
   function titleFor(route) {
-    const labels = { home:'الرئيسية', lessons:'مسارات التعلّم', exercises:'التمارين', library:'مكتبة الوثائق', progress:'تقدمي', settings:'الإعدادات', updates:'آخر المستجدات' };
+    const labels = { home:'الرئيسية', lessons:'مسارات التعلّم', exercises:'التمارين', library:'مكتبة الوثائق', opportunities:'المسابقات والمشاريع', progress:'تقدمي', settings:'الإعدادات', updates:'آخر المستجدات' };
     if (route.startsWith('lesson:')) return 'مسار التعلّم';
     if (route.startsWith('exercise:')) return 'التدريب';
+    if (route.startsWith('project:')) return 'دليل إنجاز المشروع';
     return labels[route] || 'الرئيسية';
   }
   function render() {
@@ -165,13 +173,15 @@
     $('#profile-name').textContent = user.name ? user.name.split(' ')[0] : 'ملفي';
     $('#profile-avatar').textContent = user.name ? [...user.name][0] : 'ط';
     $('#exercise-count').textContent = state.content.exercises.length;
-    $$('.nav-link,[data-route]', document).forEach(button => button.classList.toggle('is-active', button.dataset.route === state.route || (state.route.startsWith('lesson:') && button.dataset.route === 'lessons') || (state.route.startsWith('exercise:') && button.dataset.route === 'exercises')));
+    $$('.nav-link,[data-route]', document).forEach(button => button.classList.toggle('is-active', button.dataset.route === state.route || (state.route.startsWith('lesson:') && button.dataset.route === 'lessons') || (state.route.startsWith('exercise:') && button.dataset.route === 'exercises') || (state.route.startsWith('project:') && button.dataset.route === 'opportunities')));
     if (state.route === 'home') view.innerHTML = renderHome();
     else if (state.route === 'lessons') view.innerHTML = renderLessons();
     else if (state.route.startsWith('lesson:')) view.innerHTML = renderLesson(state.route.split(':')[1]);
     else if (state.route === 'exercises') view.innerHTML = renderExercises();
     else if (state.route.startsWith('exercise:')) view.innerHTML = renderExercise(state.route.split(':')[1]);
     else if (state.route === 'library') view.innerHTML = renderLibrary();
+    else if (state.route === 'opportunities') view.innerHTML = renderOpportunities();
+    else if (state.route.startsWith('project:')) view.innerHTML = renderProject(state.route.split(':')[1]);
     else if (state.route === 'progress') view.innerHTML = renderProgress();
     else if (state.route === 'settings') view.innerHTML = renderSettings();
     else if (state.route === 'updates') view.innerHTML = renderUpdates();
@@ -186,12 +196,14 @@
     const done = Math.min(completedCount(), total);
     const pct = total ? Math.round(done / total * 100) : 0;
     const greeting = user.name ? `مرحبا ${esc(user.name.split(' ')[0])}،` : 'مرحبا بك،';
+    const featured = (state.content.competitions || []).find(x => x.status === 'open') || (state.content.competitions || []).find(x => x.status === 'upcoming');
     return `<section class="welcome-hero">
       <div class="hero-copy"><span class="hero-kicker"><span class="sparkle">✦</span> مساحة علمية بطموح كبير</span><h1>${greeting}<br>كل مسألة كتقربك من <em>التفوّق</em></h1><p>تعلّم فكرة جديدة، جرّب بيدك، وتابع تقدمك خطوة بخطوة.</p><div class="hero-actions"><button class="button button-gold" data-route="exercises">ابدأ تمريناً <span>←</span></button><button class="button button-glass" data-route="lessons">اكتشف المسارات</button></div></div>
       <div class="hero-art"><div class="orbit orbit-one"></div><div class="orbit orbit-two"></div><div class="medal">✦<small>OLYMPIAD</small></div><span class="hero-float float-a">فكّر</span><span class="hero-float float-b">جرّب</span><span class="hero-float float-c">تألّق</span></div>
       <div class="hero-bottom"><span>نادي الأولمبياد والمسابقات</span><span>ثانوية الوفاق التأهيلية · سيدي الزوين</span></div>
     </section>
     <section class="stat-grid" aria-label="ملخص التقدم"><article class="stat-card"><span class="stat-icon teal">▤</span><div><small>مسارات التعلّم</small><strong>${state.content.lessons.length}</strong></div><span class="stat-note">مسارات</span></article><article class="stat-card"><span class="stat-icon amber">✎</span><div><small>تمارين متاحة</small><strong>${total}</strong></div><span class="stat-note">للتدرب</span></article><article class="stat-card"><span class="stat-icon blue">◔</span><div><small>إنجازك</small><strong>${pct}<i>%</i></strong></div><span class="stat-note">من التمارين</span></article><article class="stat-card"><span class="stat-icon violet">★</span><div><small>نقاطك</small><strong>${state.progress.points}</strong></div><span class="stat-note">نقطة</span></article></section>
+    ${featured ? `<section class="feature-banner"><span class="feature-flare">✦</span><div><small>فرصة قريبة</small><h2>${esc(featured.title)}</h2><p>${esc(featured.dateLabel)}</p></div><button class="button button-primary" data-route="opportunities">شوف التفاصيل <span>←</span></button></section>` : ''}
     <div class="section-heading"><div><span class="eyebrow">خطوتك التالية</span><h2>كمّل رحلتك</h2></div><button class="text-button" data-route="lessons">عرض كل المسارات <span>←</span></button></div>
     <section class="card-grid lesson-grid">${lessons.map(lessonCard).join('') || emptyState('مازال ما تزاد حتى مسار تعلّم.')}</section>
     <div class="section-heading section-heading-spaced"><div><span class="eyebrow">تدريب عملي</span><h2>تمارين مختارة ليك</h2></div><button class="text-button" data-route="exercises">عرض جميع التمارين <span>←</span></button></div>
@@ -243,6 +255,32 @@
     const list = state.content.resources.filter(x => matchQuery(`${x.title} ${x.description} ${x.type} ${x.subject} ${x.level}`));
     return `<div class="page-intro"><div><span class="eyebrow">مرجعك في أي وقت</span><h1>مكتبة الوثائق</h1><p>الملفات كتتجلب من مستودع النادي ويمكن فتحها أو تحميلها.</p></div><div class="intro-mark">▣</div></div><form class="searchbar" data-search-form><span>⌕</span><input id="search-input" value="${esc(state.query)}" placeholder="قلب على وثيقة أو مادة…"><button class="button button-primary">بحث</button></form><section class="resource-list">${list.map(resourceCard).join('') || emptyState('ما لقيناش وثائق مطابقة.')}</section><p class="source-note"><span class="sync-dot ${state.sync === 'online' ? 'is-online' : ''}"></span> مصدر المحتوى: مستودع GitHub ديال النادي</p>`;
   }
+  function renderOpportunities() {
+    const competitions = Array.isArray(state.content.competitions) ? state.content.competitions : [];
+    const projects = Array.isArray(state.content.projects) ? state.content.projects : [];
+    const tab = state.opTab || 'competitions';
+    const header = `<div class="page-intro"><div><span class="eyebrow">من حلّ المسائل إلى ابتكار الحلول</span><h1>المسابقات والمشاريع</h1><p>فرص تنافسية بالمغرب ومشاريع عملية مناسبة للجذع المشترك والأولى باكالوريا.</p></div><div class="intro-mark">✦</div></div><div class="opportunity-summary"><span>📅 تواريخ محينة في ${esc(state.content.researchChecked || '3 نونبر 2026')}</span><span>🛠️ تحديات قابلة للتنفيذ داخل النادي</span></div><div class="op-tabs" role="tablist"><button class="op-tab ${tab === 'competitions' ? 'active' : ''}" data-op-tab="competitions">المسابقات <small>${competitions.length}</small></button><button class="op-tab ${tab === 'projects' ? 'active' : ''}" data-op-tab="projects">مشاريع عملية <small>${projects.length}</small></button></div>`;
+    if (tab === 'projects') {
+      const list = projects.filter(x => matchQuery(`${x.title} ${x.summary} ${x.subjects} ${x.level}`));
+      return `${header}<p class="op-intro">اختاروا فكرة، صمّموا نموذجاً أولياً، جرّبوه، ثم وثّقوا النتائج بحال فريق هندسي.</p><section class="project-grid">${list.map(projectCard).join('') || emptyState('ما لقيناش مشروع مطابق.')}</section>`;
+    }
+    const list = competitions.filter(x => matchQuery(`${x.title} ${x.category} ${x.summary} ${x.eligibility} ${x.statusLabel}`));
+    return `${header}<div class="op-intro-row"><p class="op-intro">فرص وطنية ودولية مع حالة التسجيل والمواعيد المعروفة. راجع دائماً إعلان الجهة المنظمة قبل الالتزام.</p><form class="searchbar compact-search" data-search-form><span>⌕</span><input id="search-input" value="${esc(state.query)}" placeholder="قلب على مسابقة أو مادة…"><button class="button button-primary">بحث</button></form></div><section class="competition-grid">${list.map(competitionCard).join('') || emptyState('ما لقيناش مسابقة مطابقة.')}</section><p class="source-note">المواعيد كتتبدل؛ روابط المنظمين موجودة داخل كل بطاقة.</p>`;
+  }
+  function competitionCard(x) {
+    const statusClass = x.status === 'open' ? 'open' : x.status === 'upcoming' ? 'upcoming' : 'closed';
+    const target = navigator.userAgent.includes('OlympiadClubAndroid') || window.Capacitor?.isNativePlatform?.() ? '_self' : '_blank';
+    return `<article class="competition-card"><div class="competition-card-top"><span class="competition-icon">${esc(x.icon || '✦')}</span><span class="op-status ${statusClass}">${esc(x.statusLabel)}</span></div><div class="card-category">${esc(x.category || 'مسابقة')}</div><h3>${esc(x.title)}</h3><p>${esc(x.summary)}</p><div class="op-meta"><span><b>الموعد</b>${esc(x.dateLabel)}</span><span><b>المعنيون</b>${esc(x.eligibility)}</span></div>${x.note ? `<div class="op-note">${esc(x.note)}</div>` : ''}<a class="op-source" href="${esc(x.url)}" target="${target}" rel="noopener">${esc(x.sourceLabel || 'الموقع الرسمي')} ↗</a></article>`;
+  }
+  function projectCard(x) {
+    return `<article class="project-card"><div class="project-card-top"><span class="project-icon">${esc(x.icon || '⚙')}</span><span class="difficulty ${difficultyClass(x.difficulty)}">${esc(x.difficulty)}</span></div><div class="card-category">${esc(x.subjects.join(' · '))}</div><h3>${esc(x.title)}</h3><p>${esc(x.summary)}</p><div class="project-meta"><span>⏱ ${esc(x.duration)}</span><span>🎓 ${esc(x.level)}</span></div><button class="button button-primary" data-open-project="${esc(x.id)}">افتح دليل الإنجاز <span>←</span></button></article>`;
+  }
+  function renderProject(id) {
+    const item = (state.content.projects || []).find(x => String(x.id) === String(id));
+    if (!item) return emptyState('هاد المشروع ما بقاش متاح.', 'opportunities');
+    const list = arr => (Array.isArray(arr) ? arr : []).map((v, i) => `<li><span>${String(i+1).padStart(2,'0')}</span>${esc(v)}</li>`).join('');
+    return `<button class="back-link" data-back-projects>→ رجوع للمشاريع</button><article class="detail-panel project-detail"><div class="detail-symbol">${esc(item.icon || '⚙')}</div><div class="detail-kicker">${esc(item.subjects.join(' · '))} · ${esc(item.duration)} · ${esc(item.difficulty)}</div><h1>${esc(item.title)}</h1><p class="detail-lead">${esc(item.summary)}</p><div class="project-facts"><span><b>المستوى</b>${esc(item.level)}</span><span><b>المخرج</b>${esc(item.deliverable)}</span></div><div class="detail-body"><h2>الفكرة العلمية</h2><p>${esc(item.learningGoal)}</p><h2>المواد والأدوات</h2><ul class="project-steps">${list(item.materials)}</ul><h2>خطوات الإنجاز</h2><ol class="project-steps">${list(item.steps)}</ol><h2>كيف نختبروه؟</h2><ul class="project-steps">${list(item.tests)}</ul><div class="tip-box safety-box"><strong>السلامة</strong><span>${esc(item.safety)}</span></div><div class="tip-box"><strong>تحدي التطوير</strong><span>${esc(item.extension)}</span></div></div><div class="detail-actions"><button class="button button-primary" data-back-projects>رجوع للمشاريع</button><button class="button button-quiet" data-route="progress">سجّل ملاحظاتك في دفتر التقدم</button></div></article>`;
+  }
   function resourceCard(x) {
     const nativeAndroid = navigator.userAgent.includes('OlympiadClubAndroid');
     const target = nativeAndroid || window.Capacitor?.isNativePlatform?.() ? '_self' : '_blank';
@@ -291,6 +329,9 @@
   $('#mobile-nav').addEventListener('click', e => { const button = e.target.closest('[data-route]'); if (button) setRoute(button.dataset.route); });
   view.addEventListener('click', e => {
     const filter = e.target.closest('[data-filter]'); if (filter) { state.filter = filter.dataset.filter; render(); return; }
+    const opTab = e.target.closest('[data-op-tab]'); if (opTab) { state.opTab = opTab.dataset.opTab; state.query = ''; render(); return; }
+    const project = e.target.closest('[data-open-project]'); if (project) { setRoute(`project:${project.dataset.openProject}`); return; }
+    if (e.target.closest('[data-back-projects]')) { state.opTab = 'projects'; setRoute('opportunities'); return; }
     const route = e.target.closest('[data-route]'); if (route) { setRoute(route.dataset.route); return; }
     const lesson = e.target.closest('[data-open-lesson]'); if (lesson) { setRoute(`lesson:${lesson.dataset.openLesson}`); return; }
     const exercise = e.target.closest('[data-open-exercise]'); if (exercise) { setRoute(`exercise:${exercise.dataset.openExercise}`); return; }

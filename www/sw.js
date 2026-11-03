@@ -1,4 +1,4 @@
-const CACHE_NAME = 'olympiad-club-v2';
+const CACHE_NAME = 'olympiad-club-v3';
 const SHELL = [
   './', './index.html', './styles.css', './app.js', './manifest.webmanifest', './assets/club-logo.png', './assets/club-mark.svg', './assets/club-icon-192.png', './assets/club-icon-512.png', './assets/apple-touch-icon.png', './data/content.json',
   './files/club-library/optics.pdf', './files/club-library/SIunits.pdf', './files/club-library/DCelectricity.pdf',

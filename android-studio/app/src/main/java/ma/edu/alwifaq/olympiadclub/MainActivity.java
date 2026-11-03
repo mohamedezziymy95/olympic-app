@@ -4,190 +4,64 @@ import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.Typeface;
+import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-import android.view.WindowInsets;
-import android.webkit.CookieManager;
-import android.webkit.MimeTypeMap;
-import android.webkit.WebChromeClient;
+import android.view.Gravity;
+import android.view.View;
+import android.view.ViewGroup;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebResourceResponse;
-import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ScrollView;
+import android.widget.TextView;
 import android.widget.Toast;
-
-import java.io.FileNotFoundException;
+import org.json.JSONArray;
+import org.json.JSONObject;
+import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
-import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 
+/** Native Android club shell. Learning material is shared with the web and iOS versions. */
 public final class MainActivity extends Activity {
-    private static final String APP_HOST = "appassets.androidplatform.net";
-    private static final String START_URL = "https://" + APP_HOST + "/index.html#home";
-    private WebView webView;
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        getWindow().setStatusBarColor(Color.rgb(16, 36, 58));
-        getWindow().setNavigationBarColor(Color.rgb(16, 36, 58));
-        getWindow().getDecorView().setSystemUiVisibility(0);
-
-        webView = new WebView(this);
-        webView.setBackgroundColor(Color.rgb(244, 247, 250));
-        setContentView(webView);
-        applySystemInsets();
-
-        WebSettings settings = webView.getSettings();
-        settings.setJavaScriptEnabled(true);
-        settings.setDomStorageEnabled(true);
-        settings.setDatabaseEnabled(true);
-        settings.setAllowFileAccess(false);
-        settings.setAllowContentAccess(false);
-        settings.setJavaScriptCanOpenWindowsAutomatically(false);
-        settings.setSupportMultipleWindows(false);
-        settings.setMixedContentMode(WebSettings.MIXED_CONTENT_NEVER_ALLOW);
-        settings.setUserAgentString(settings.getUserAgentString() + " OlympiadClubAndroid");
-        CookieManager.getInstance().setAcceptCookie(true);
-
-        webView.setWebChromeClient(new WebChromeClient());
-        webView.setWebViewClient(new WebViewClient() {
-            @Override
-            public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
-                Uri uri = request.getUrl();
-                if (!"https".equalsIgnoreCase(uri.getScheme()) || !APP_HOST.equalsIgnoreCase(uri.getHost())) {
-                    return super.shouldInterceptRequest(view, request);
-                }
-                return serveAsset(uri.getPath());
-            }
-
-            @Override
-            public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
-                return handleNavigation(request.getUrl());
-            }
-
-            @Override
-            public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                return handleNavigation(Uri.parse(url));
-            }
-        });
-
-        if (savedInstanceState != null) webView.restoreState(savedInstanceState);
-        else webView.loadUrl(START_URL);
-    }
-
-    private void applySystemInsets() {
-        if (Build.VERSION.SDK_INT >= 35) {
-            getWindow().getDecorView().setOnApplyWindowInsetsListener((view, insets) -> {
-                android.graphics.Insets bars = insets.getInsets(WindowInsets.Type.systemBars());
-                webView.setPadding(bars.left, bars.top, bars.right, bars.bottom);
-                return insets;
-            });
-        }
-    }
-
-    private WebResourceResponse serveAsset(String requestedPath) {
-        String path;
-        try {
-            path = URLDecoder.decode(requestedPath == null ? "/" : requestedPath, StandardCharsets.UTF_8.name());
-        } catch (Exception ex) {
-            return errorResponse(400, "Bad request");
-        }
-        if (path.isEmpty() || "/".equals(path)) path = "/index.html";
-        if (path.contains("..") || path.startsWith("//")) return errorResponse(403, "Forbidden");
-        String relative = path.replaceFirst("^/+", "");
-        String type = mimeType(relative);
-        try {
-            InputStream stream = getAssets().open("www/" + relative);
-            Map<String, String> headers = new HashMap<>();
-            headers.put("Cache-Control", "no-cache");
-            headers.put("X-Content-Type-Options", "nosniff");
-            return new WebResourceResponse(type, "UTF-8", 200, "OK", headers, stream);
-        } catch (FileNotFoundException ex) {
-            return errorResponse(404, "Not found");
-        } catch (Exception ex) {
-            return errorResponse(500, "Unable to load app file");
-        }
-    }
-
-    private WebResourceResponse errorResponse(int code, String message) {
-        Map<String, String> headers = Collections.singletonMap("Cache-Control", "no-store");
-        return new WebResourceResponse("text/plain", "UTF-8", code, message, headers,
-                new java.io.ByteArrayInputStream(message.getBytes(StandardCharsets.UTF_8)));
-    }
-
-    private String mimeType(String path) {
-        String lower = path.toLowerCase();
-        if (lower.endsWith(".webmanifest")) return "application/manifest+json";
-        if (lower.endsWith(".json")) return "application/json";
-        if (lower.endsWith(".js")) return "text/javascript";
-        if (lower.endsWith(".css")) return "text/css";
-        if (lower.endsWith(".svg")) return "image/svg+xml";
-        if (lower.endsWith(".pdf")) return "application/pdf";
-        String ext = MimeTypeMap.getFileExtensionFromUrl(path);
-        String type = MimeTypeMap.getSingleton().getMimeTypeFromExtension(ext);
-        return type == null ? "application/octet-stream" : type;
-    }
-
-    private boolean handleNavigation(Uri uri) {
-        String scheme = uri.getScheme() == null ? "" : uri.getScheme().toLowerCase();
-        String host = uri.getHost() == null ? "" : uri.getHost().toLowerCase();
-        String path = uri.getPath() == null ? "" : uri.getPath();
-        if ("https".equals(scheme) && APP_HOST.equals(host)) {
-            if (path.toLowerCase().endsWith(".pdf")) {
-                String assetPath = path.replaceFirst("^/+", "");
-                if (assetPath.contains("..")) return true;
-                Intent intent = new Intent(this, PdfActivity.class);
-                intent.putExtra(PdfActivity.EXTRA_ASSET_PATH, assetPath);
-                startActivity(intent);
-                return true;
-            }
-            return false;
-        }
-        if ("https".equals(scheme) && "raw.githubusercontent.com".equals(host)
-                && path.toLowerCase().endsWith(".pdf")) {
-            Intent intent = new Intent(this, PdfActivity.class);
-            intent.putExtra(PdfActivity.EXTRA_REMOTE_URL, uri.toString());
-            startActivity(intent);
-            return true;
-        }
-        if ("https".equals(scheme) || "http".equals(scheme) || "mailto".equals(scheme) || "tel".equals(scheme)) {
-            try {
-                startActivity(new Intent(Intent.ACTION_VIEW, uri));
-            } catch (ActivityNotFoundException ex) {
-                Toast.makeText(this, "ما كاينش تطبيق مناسب لفتح هاد الرابط.", Toast.LENGTH_SHORT).show();
-            }
-            return true;
-        }
-        return true;
-    }
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        if (webView != null) webView.saveState(outState);
-        super.onSaveInstanceState(outState);
-    }
-
-    @Override
-    public void onBackPressed() {
-        if (webView != null && webView.canGoBack()) webView.goBack();
-        else super.onBackPressed();
-    }
-
-    @Override
-    protected void onDestroy() {
-        if (webView != null) {
-            webView.stopLoading();
-            webView.setWebChromeClient(null);
-            webView.setWebViewClient(null);
-            webView.destroy();
-            webView = null;
-        }
-        super.onDestroy();
-    }
+    private static final String APP_HOST="appassets.androidplatform.net", START_URL="https://"+APP_HOST+"/index.html";
+    private static final int NAVY=Color.rgb(16,36,58), TEAL=Color.rgb(12,132,134), BG=Color.rgb(244,247,250), INK=Color.rgb(32,55,72), MUTED=Color.rgb(108,126,138);
+    private JSONObject content; private LinearLayout bottomNav; private FrameLayout host; private String current="home"; private WebView learning; private boolean viewingProjectDetail;
+    @Override protected void onCreate(Bundle b){super.onCreate(b);getWindow().setStatusBarColor(NAVY);getWindow().setNavigationBarColor(NAVY);content=readContent();buildShell();show("home");}
+    private void buildShell(){LinearLayout root=new LinearLayout(this);root.setOrientation(1);root.setBackgroundColor(BG);root.addView(toolbar(),new LinearLayout.LayoutParams(-1,dp(62)));host=new FrameLayout(this);root.addView(host,new LinearLayout.LayoutParams(-1,0,1));bottomNav=nav();root.addView(bottomNav,new LinearLayout.LayoutParams(-1,dp(66)));setContentView(root);}
+    private View toolbar(){LinearLayout bar=new LinearLayout(this);bar.setGravity(Gravity.CENTER_VERTICAL);bar.setPadding(dp(18),0,dp(18),0);bar.setBackgroundColor(Color.WHITE);ImageView logo=new ImageView(this);try(InputStream in=getAssets().open("www/assets/club-icon-192.png")){logo.setImageDrawable(android.graphics.drawable.Drawable.createFromStream(in,null));}catch(Exception ignored){}logo.setScaleType(ImageView.ScaleType.CENTER_CROP);bar.addView(logo,new LinearLayout.LayoutParams(dp(40),dp(40)));LinearLayout words=col();words.setPadding(dp(10),0,0,0);words.addView(txt("نادي الأولمبياد والمسابقات",14,INK,true));words.addView(txt("ثانوية الوفاق التأهيلية · سيدي الزوين",9,MUTED,false));bar.addView(words,new LinearLayout.LayoutParams(0,-2,1));TextView star=txt("✦",20,TEAL,true);star.setGravity(Gravity.CENTER);bar.addView(star,new LinearLayout.LayoutParams(dp(34),dp(40)));return bar;}
+    private LinearLayout nav(){LinearLayout nav=new LinearLayout(this);nav.setGravity(Gravity.CENTER);nav.setBackgroundColor(Color.WHITE);nav.setElevation(dp(8));String[][] items={{"home","⌂","الرئيسية"},{"competitions","✦","المسابقات"},{"projects","⚙","المشاريع"},{"library","▣","الوثائق"},{"learn","▤","التعلّم"}};for(String[] it:items){LinearLayout c=new LinearLayout(this);c.setOrientation(1);c.setGravity(Gravity.CENTER);c.setPadding(dp(2),dp(6),dp(2),dp(4));TextView icon=txt(it[1],18,MUTED,true);icon.setGravity(Gravity.CENTER);TextView label=txt(it[2],9,MUTED,false);label.setGravity(Gravity.CENTER);c.addView(icon);c.addView(label);c.setTag(it[0]);c.setOnClickListener(v->show((String)v.getTag()));nav.addView(c,new LinearLayout.LayoutParams(0,-1,1));}return nav;}
+    private void show(String screen){current=screen;viewingProjectDetail=false;host.removeAllViews();if("learn".equals(screen)){showLearning();}else{ScrollView s=new ScrollView(this);s.setClipToPadding(false);LinearLayout p=col();p.setPadding(dp(18),dp(18),dp(18),dp(24));s.addView(p);if("home".equals(screen))home(p);else if("competitions".equals(screen))competitions(p);else if("projects".equals(screen))projects(p);else library(p);host.addView(s);}selectNav();}
+    private void showLearning(){if(learning==null){learning=new WebView(this);learning.getSettings().setJavaScriptEnabled(true);learning.getSettings().setDomStorageEnabled(true);learning.getSettings().setDatabaseEnabled(true);learning.getSettings().setAllowFileAccess(false);learning.getSettings().setAllowContentAccess(false);learning.getSettings().setJavaScriptCanOpenWindowsAutomatically(false);learning.getSettings().setSupportMultipleWindows(false);learning.getSettings().setMixedContentMode(android.webkit.WebSettings.MIXED_CONTENT_NEVER_ALLOW);learning.getSettings().setUserAgentString(learning.getSettings().getUserAgentString()+" OlympiadClubAndroid");learning.setBackgroundColor(BG);learning.setWebViewClient(new WebViewClient(){@Override public WebResourceResponse shouldInterceptRequest(WebView v,WebResourceRequest r){Uri u=r.getUrl();if(!"https".equalsIgnoreCase(u.getScheme())||!APP_HOST.equalsIgnoreCase(u.getHost()))return super.shouldInterceptRequest(v,r);String path=u.getPath();if(path==null||path.contains(".."))return errorAsset(403,"Forbidden");if(path.isEmpty()||"/".equals(path))path="/index.html";try{InputStream in=getAssets().open("www/"+path.replaceFirst("^/+",""));return new WebResourceResponse(mime(path),"UTF-8",in);}catch(Exception e){return errorAsset(404,"Not found");}}@Override public boolean shouldOverrideUrlLoading(WebView v,WebResourceRequest r){return webNav(r.getUrl());}@Override public boolean shouldOverrideUrlLoading(WebView v,String u){return webNav(Uri.parse(u));}});learning.loadUrl(START_URL+"#lessons");}if(learning.getParent()!=null)((ViewGroup)learning.getParent()).removeView(learning);host.addView(learning,new FrameLayout.LayoutParams(-1,-1));}
+    private WebResourceResponse errorAsset(int code,String message){return new WebResourceResponse("text/plain","UTF-8",code,code==404?"Not found":"Forbidden",java.util.Collections.singletonMap("Cache-Control","no-store"),new java.io.ByteArrayInputStream(message.getBytes(StandardCharsets.UTF_8)));}
+    private String mime(String path){String p=path.toLowerCase();if(p.endsWith(".html"))return "text/html";if(p.endsWith(".css"))return "text/css";if(p.endsWith(".js"))return "text/javascript";if(p.endsWith(".json"))return "application/json";if(p.endsWith(".svg"))return "image/svg+xml";if(p.endsWith(".png"))return "image/png";if(p.endsWith(".pdf"))return "application/pdf";if(p.endsWith(".webmanifest"))return "application/manifest+json";return "application/octet-stream";}
+    private boolean webNav(Uri u){String scheme=u.getScheme()==null?"":u.getScheme().toLowerCase(),h=u.getHost()==null?"":u.getHost().toLowerCase(),p=u.getPath()==null?"":u.getPath();if("https".equals(scheme)&&APP_HOST.equals(h)){if(p.toLowerCase().endsWith(".pdf")){openPdf(p.replaceFirst("^/+",""),null);return true;}return false;}if("https".equals(scheme)&&"raw.githubusercontent.com".equals(h)&&p.toLowerCase().endsWith(".pdf")){openPdf(null,u.toString());return true;}if(scheme.equals("https")||scheme.equals("http")||scheme.equals("mailto")||scheme.equals("tel")){external(u.toString());return true;}return true;}
+    private void selectNav(){if(bottomNav==null)return;for(int i=0;i<bottomNav.getChildCount();i++){LinearLayout c=(LinearLayout)bottomNav.getChildAt(i);int color=current.equals(c.getTag())?TEAL:MUTED;((TextView)c.getChildAt(0)).setTextColor(color);((TextView)c.getChildAt(1)).setTextColor(color);c.setBackground(current.equals(c.getTag())?shape(Color.rgb(237,247,246),12):null);}}
+    private void home(LinearLayout p){JSONObject f=first("open");if(f==null)f=first("upcoming");LinearLayout hero=col();hero.setPadding(dp(20),dp(20),dp(20),dp(20));hero.setBackground(gradient(NAVY,Color.rgb(18,94,104),22));add(hero,"مختبر الأفكار والإنجاز",11,Color.rgb(175,231,222),true,0,8);add(hero,"تعلّم، جرّب، ونافس بثقة",23,Color.WHITE,true,0,8);add(hero,"مساحة النادي للتدريب العلمي، اكتشاف المسابقات، وصناعة نماذج عملية من أفكار التلاميذ.",13,Color.rgb(226,237,241),false,0,15);hero.addView(button("اكتشف المسابقات  ←",TEAL,()->show("competitions")));p.addView(hero,lp(-1,-2,0,0,0,15));if(f!=null){LinearLayout c=card();add(c,"فرصة قريبة",10,TEAL,true,0,4);add(c,f.optString("title"),15,INK,true,0,4);add(c,f.optString("dateLabel"),11,MUTED,false,0,10);c.addView(button("شوف التفاصيل",Color.rgb(235,246,244),()->show("competitions")));p.addView(c,lp(-1,-2,0,0,0,14));}JSONArray competitions=content.optJSONArray("competitions"),projects=content.optJSONArray("projects");LinearLayout stats=new LinearLayout(this);stats.addView(stat(String.valueOf(competitions==null?0:competitions.length()),"مسابقات"),new LinearLayout.LayoutParams(0,dp(82),1));stats.addView(new View(this),new LinearLayout.LayoutParams(dp(9),1));stats.addView(stat(String.valueOf(projects==null?0:projects.length()),"مشاريع"),new LinearLayout.LayoutParams(0,dp(82),1));p.addView(stats,lp(-1,-2,0,0,0,18));heading(p,"مختبر النادي","من الفكرة حتى النموذج الأولي");quick(p,"⚙","مشاريع النادي","أدلة إنجاز، اختبارات، وسلامة","projects");quick(p,"▣","مكتبة الوثائق","قارئ PDF أصلي مع تكبير وتمرير","library");quick(p,"▤","الدروس والتمارين","مسارات التدريب والموارد العلمية","learn");add(p,"آخر تحقق من مواعيد المسابقات: "+content.optString("researchChecked","2026–2027"),10,MUTED,false,dp(4),8);}
+    private void competitions(LinearLayout p){heading(p,"فرص التنافس","المسابقات العلمية والروبوتيك بالمغرب");JSONArray a=content.optJSONArray("competitions");if(a==null||a.length()==0){add(p,"ما كايناش مسابقات محفوظة دابا.",13,MUTED,false,0,0);return;}for(int i=0;i<a.length();i++){JSONObject x=a.optJSONObject(i);if(x!=null)p.addView(competitionCard(x),lp(-1,-2,0,0,0,12));}add(p,"آخر تحقق: "+content.optString("researchChecked","—")+" · افتح مصدر كل مسابقة للتأكد من آخر إعلان.",10,MUTED,false,0,10);}
+    private View competitionCard(JSONObject x){LinearLayout b=card();LinearLayout top=new LinearLayout(this);top.setGravity(Gravity.CENTER_VERTICAL);TextView icon=txt(x.optString("icon","✦"),21,TEAL,true);icon.setGravity(Gravity.CENTER);icon.setBackground(shape(Color.rgb(235,246,244),13));top.addView(icon,new LinearLayout.LayoutParams(dp(43),dp(43)));top.addView(new View(this),new LinearLayout.LayoutParams(0,1,1));String st=x.optString("status");TextView badge=txt(x.optString("statusLabel"),10,statusColor(st),true);badge.setGravity(Gravity.CENTER);badge.setPadding(dp(10),dp(7),dp(10),dp(7));badge.setBackground(shape(statusBg(st),24));top.addView(badge);b.addView(top);add(b,x.optString("category","مسابقة"),9,TEAL,true,0,4);add(b,x.optString("title"),16,INK,true,0,5);add(b,x.optString("summary"),12,MUTED,false,0,10);fact(b,"الموعد",x.optString("dateLabel","راجع إعلان المنظم"));fact(b,"المعنيون",x.optString("eligibility","راجع شروط المشاركة"));if(!x.optString("note").isEmpty()){TextView n=txt("تنبيه · "+x.optString("note"),10,Color.rgb(127,99,38),false);n.setPadding(dp(10),dp(9),dp(10),dp(9));n.setBackground(shape(Color.rgb(255,249,233),10));b.addView(n,lp(-1,-2,0,6,0,10));}b.addView(button("مصدر وتفاصيل  ↗",Color.rgb(235,246,244),()->external(x.optString("url"))));return b;}
+    private void projects(LinearLayout p){heading(p,"تحديات ومشاريع","صمّموا، ابنوا، قيسوا، ثم حسّنوا");JSONArray a=content.optJSONArray("projects");if(a==null||a.length()==0){add(p,"ما كايناش مشاريع محفوظة دابا.",13,MUTED,false,0,0);return;}for(int i=0;i<a.length();i++){JSONObject x=a.optJSONObject(i);if(x==null)continue;LinearLayout b=card();add(b,x.optString("icon","⚙")+"   "+join(x.optJSONArray("subjects")," · "),12,TEAL,true,0,6);add(b,x.optString("title"),16,INK,true,0,5);add(b,x.optString("summary"),12,MUTED,false,0,9);add(b,"⏱ "+x.optString("duration")+"     ·     "+x.optString("level"),10,MUTED,false,0,12);b.addView(button("افتح دليل الإنجاز  ←",TEAL,()->projectDetail(x)));p.addView(b,lp(-1,-2,0,0,0,12));}}
+    private void projectDetail(JSONObject x){ScrollView s=new ScrollView(this);LinearLayout p=col();p.setPadding(dp(18),dp(18),dp(18),dp(24));s.addView(p);TextView back=txt("→ رجوع للمشاريع",12,TEAL,true);back.setPadding(0,0,0,dp(14));back.setOnClickListener(v->show("projects"));p.addView(back);LinearLayout intro=card();add(intro,x.optString("icon","⚙")+"   "+join(x.optJSONArray("subjects")," · "),12,TEAL,true,0,8);add(intro,x.optString("title"),21,INK,true,0,7);add(intro,x.optString("summary"),12,MUTED,false,0,10);add(intro,"المستوى: "+x.optString("level")+"     ·     المدة: "+x.optString("duration"),10,MUTED,true,0,0);p.addView(intro,lp(-1,-2,0,0,0,12));detail(p,"الفكرة العلمية",x.optString("learningGoal"));detail(p,"المواد والأدوات",x.optJSONArray("materials"),false);detail(p,"خطوات الإنجاز",x.optJSONArray("steps"),true);detail(p,"كيف نختبروه؟",x.optJSONArray("tests"),false);detail(p,"السلامة",x.optString("safety"));detail(p,"تحدي التطوير",x.optString("extension"));host.removeAllViews();host.addView(s);current="projects";viewingProjectDetail=true;selectNav();}
+    private void library(LinearLayout p){heading(p,"مكتبة النادي","وثائق PDF محفوظة، ويمكن فتحها دون إنترنت");JSONArray a=content.optJSONArray("resources");if(a==null){add(p,"ما كايناش وثائق محفوظة.",13,MUTED,false,0,0);return;}for(int i=0;i<a.length();i++){JSONObject x=a.optJSONObject(i);if(x==null)continue;LinearLayout b=card();add(b,"▣   "+x.optString("title"),14,INK,true,0,5);add(b,x.optString("subject",x.optString("type","وثيقة"))+" · "+x.optString("level","مورد النادي"),10,MUTED,false,0,6);if(!x.optString("description").isEmpty())add(b,x.optString("description"),11,MUTED,false,0,8);b.addView(button("فتح الوثيقة  ↗",Color.rgb(235,246,244),()->openPdf(x.optString("file"),null)));p.addView(b,lp(-1,-2,0,0,0,10));}}
+    private void detail(LinearLayout p,String title,String value){LinearLayout b=card();add(b,title,15,INK,true,0,7);add(b,value,12,MUTED,false,0,0);p.addView(b,lp(-1,-2,0,0,0,9));}
+    private void detail(LinearLayout p,String title,JSONArray values,boolean ordered){LinearLayout b=card();add(b,title,15,INK,true,0,8);if(values!=null)for(int i=0;i<values.length();i++){LinearLayout row=new LinearLayout(this);row.setGravity(Gravity.TOP);TextView n=txt(ordered?String.format(java.util.Locale.ROOT,"%02d",i+1):"•",10,TEAL,true);n.setGravity(Gravity.CENTER);n.setBackground(shape(Color.rgb(235,246,244),8));row.addView(n,new LinearLayout.LayoutParams(dp(27),dp(27)));TextView v=txt(values.optString(i),12,MUTED,false);v.setPadding(dp(9),dp(2),0,dp(2));row.addView(v,new LinearLayout.LayoutParams(0,-2,1));b.addView(row,lp(-1,-2,0,0,0,8));}p.addView(b,lp(-1,-2,0,0,0,9));}
+    private void quick(LinearLayout p,String icon,String title,String sub,String screen){LinearLayout b=card();b.setOrientation(0);b.setGravity(Gravity.CENTER_VERTICAL);TextView mark=txt(icon,18,TEAL,true);mark.setGravity(Gravity.CENTER);mark.setBackground(shape(Color.rgb(235,246,244),12));b.addView(mark,new LinearLayout.LayoutParams(dp(42),dp(42)));LinearLayout copy=col();copy.setPadding(dp(10),0,0,0);copy.addView(txt(title,13,INK,true));copy.addView(txt(sub,10,MUTED,false));b.addView(copy,new LinearLayout.LayoutParams(0,-2,1));b.setOnClickListener(v->show(screen));p.addView(b,lp(-1,-2,0,0,0,9));}
+    private View stat(String n,String label){LinearLayout b=card();b.setGravity(Gravity.CENTER);add(b,n,23,TEAL,true,0,2);add(b,label,10,MUTED,false,0,0);return b;}
+    private void heading(LinearLayout p,String t,String sub){add(p,t,23,INK,true,0,4);add(p,sub,12,MUTED,false,0,16);}private void fact(LinearLayout p,String t,String v){LinearLayout b=col();b.setPadding(dp(10),dp(8),dp(10),dp(8));b.setBackground(shape(Color.rgb(247,249,250),10));add(b,t,9,MUTED,true,0,3);add(b,v,11,INK,false,0,0);p.addView(b,lp(-1,-2,0,0,0,6));}
+    private View button(String label,int bg,Runnable run){TextView b=txt(label,12,bg==TEAL?Color.WHITE:TEAL,true);b.setGravity(Gravity.CENTER);b.setPadding(dp(14),dp(11),dp(14),dp(11));b.setBackground(shape(bg,12));b.setClickable(true);b.setOnClickListener(v->run.run());return b;}
+    private JSONObject readContent(){try(InputStream in=getAssets().open("www/data/content.json");ByteArrayOutputStream out=new ByteArrayOutputStream()){byte[] b=new byte[8192];int n;while((n=in.read(b))!=-1)out.write(b,0,n);return new JSONObject(out.toString(StandardCharsets.UTF_8.name()));}catch(Exception e){return new JSONObject();}}
+    private JSONObject first(String status){JSONArray a=content.optJSONArray("competitions");if(a!=null)for(int i=0;i<a.length();i++){JSONObject x=a.optJSONObject(i);if(x!=null&&status.equals(x.optString("status")))return x;}return null;}
+    private void external(String url){if(url==null||url.isEmpty())return;try{startActivity(new Intent(Intent.ACTION_VIEW,Uri.parse(url)));}catch(ActivityNotFoundException e){Toast.makeText(this,"تعذر فتح الرابط.",Toast.LENGTH_SHORT).show();}}
+    private void openPdf(String file,String remote){Intent i=new Intent(this,PdfActivity.class);if(remote!=null)i.putExtra(PdfActivity.EXTRA_REMOTE_URL,remote);else if(file.startsWith("http://")||file.startsWith("https://"))i.putExtra(PdfActivity.EXTRA_REMOTE_URL,file);else i.putExtra(PdfActivity.EXTRA_ASSET_PATH,file.startsWith("www/")?file:"www/"+file.replaceFirst("^/+",""));startActivity(i);}
+    private int statusColor(String s){return "open".equals(s)?Color.rgb(24,129,83):"upcoming".equals(s)?Color.rgb(56,108,163):Color.rgb(146,113,58);}private int statusBg(String s){return "open".equals(s)?Color.rgb(233,247,239):"upcoming".equals(s)?Color.rgb(237,244,252):Color.rgb(247,243,234);}private String join(JSONArray a,String sep){if(a==null)return "";StringBuilder b=new StringBuilder();for(int i=0;i<a.length();i++){if(i>0)b.append(sep);b.append(a.optString(i));}return b.toString();}
+    private LinearLayout card(){LinearLayout b=col();b.setPadding(dp(15),dp(14),dp(15),dp(14));b.setBackground(shape(Color.WHITE,16));b.setElevation(dp(2));return b;}private LinearLayout col(){LinearLayout b=new LinearLayout(this);b.setOrientation(1);b.setLayoutDirection(View.LAYOUT_DIRECTION_RTL);return b;}
+    private TextView txt(String s,int size,int color,boolean bold){TextView t=new TextView(this);t.setText(s);t.setTextSize(size);t.setTextColor(color);t.setGravity(Gravity.RIGHT);t.setTextDirection(View.TEXT_DIRECTION_RTL);t.setLineSpacing(dp(2),1.1f);t.setTypeface(Typeface.create("sans-serif",bold?Typeface.BOLD:Typeface.NORMAL));return t;}
+    private void add(LinearLayout p,String s,int size,int color,boolean bold,int top,int bottom){p.addView(txt(s,size,color,bold),lp(-1,-2,0,top,0,bottom));}private LinearLayout.LayoutParams lp(int w,int h,int l,int t,int r,int b){LinearLayout.LayoutParams p=new LinearLayout.LayoutParams(w<0?w:dp(w),h<0?h:dp(h));p.setMargins(dp(l),dp(t),dp(r),dp(b));return p;}
+    private GradientDrawable shape(int color,int radius){GradientDrawable d=new GradientDrawable();d.setColor(color);d.setCornerRadius(dp(radius));return d;}private GradientDrawable gradient(int a,int b,int radius){GradientDrawable d=new GradientDrawable(GradientDrawable.Orientation.TL_BR,new int[]{a,b});d.setCornerRadius(dp(radius));return d;}private int dp(float n){return (int)(n*getResources().getDisplayMetrics().density+.5f);}
+    @Override public void onBackPressed(){if(viewingProjectDetail){show("projects");return;}if("learn".equals(current)&&learning!=null&&learning.canGoBack()){learning.goBack();return;}if(!"home".equals(current)){show("home");return;}super.onBackPressed();}@Override protected void onDestroy(){if(learning!=null)learning.destroy();super.onDestroy();}
 }

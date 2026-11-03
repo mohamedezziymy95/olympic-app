@@ -1,0 +1,59 @@
+{
+  "name": "olympiad-club-app",
+  "version": "1.4.0",
+  "private": true,
+  "description": "منصة نادي الأولمبياد والمسابقات بثانوية الوفاق التأهيلية",
+  "author": "نادي الأولمبياد والمسابقات",
+  "scripts": {
+    "web": "node scripts/serve.cjs",
+    "desktop": "electron electron/main.cjs",
+    "desktop:win": "electron-builder --win nsis",
+    "desktop:mac": "electron-builder --mac dmg",
+    "desktop:linux": "electron-builder --linux AppImage",
+    "android:init": "cap add android",
+    "android:sync": "cap sync android",
+    "android:open": "cap open android",
+    "ios:init": "cap add ios",
+    "ios:sync": "cap sync ios",
+    "ios:open": "cap open ios",
+    "sync-content": "node scripts/sync-content.cjs",
+    "sync-android-assets": "node scripts/sync-android-assets.cjs"
+  },
+  "dependencies": {
+    "@capacitor/android": "^8.0.0",
+    "@capacitor/core": "^8.0.0",
+    "@capacitor/ios": "^8.0.0"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^8.0.0",
+    "electron": "^45.2.1",
+    "electron-builder": "^26.0.12"
+  },
+  "build": {
+    "appId": "ma.mohamedzeziymy.olympiadclub",
+    "productName": "نادي الأولمبياد والمسابقات",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "www/**/*",
+      "electron/**/*",
+      "package.json"
+    ],
+    "win": {
+      "target": [
+        "nsis"
+      ]
+    },
+    "mac": {
+      "target": [
+        "dmg"
+      ]
+    },
+    "linux": {
+      "target": [
+        "AppImage"
+      ]
+    }
+  }
+}
